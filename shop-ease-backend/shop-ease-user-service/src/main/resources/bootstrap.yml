@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: shop-ease-user-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/shop_ease_user?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+server:
+  port: 8081 # 用户服务端口
