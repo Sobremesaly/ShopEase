@@ -17,13 +17,6 @@
     <name>shop-ease-common</name>
 
     <dependencies>
-        <!-- MySQL 驱动依赖（无需写 version，继承 Spring Boot 父依赖的版本） -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version> <!-- 与 Spring Boot 2.7.15 匹配的稳定版本 -->
-            <scope>runtime</scope>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -46,18 +39,22 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-        <!-- Spring Security（用于密码加密，不做其他安全控制） -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>5.7.10</version> <!-- 与 Spring Boot 2.7.15 版本匹配 -->
         </dependency>
-        <!-- MyBatis-Plus（简化数据库操作，可选，也能用原生MyBatis） -->
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.3.1</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
-
-        <!-- 其他依赖（Spring Web、Redis、MyBatis-Plus 等）不变 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+        </dependency>
     </dependencies>
 </project>

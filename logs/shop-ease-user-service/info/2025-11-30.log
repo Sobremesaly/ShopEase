@@ -1,0 +1,67 @@
+2025-11-30 00:20:18.313 [main] INFO  com.shopease.UserApplication - The following 1 profile is active: "dev"
+2025-11-30 00:20:18.818 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2025-11-30 00:20:18.818 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-30 00:20:18.819 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.79]
+2025-11-30 00:20:18.882 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-30 00:20:22.804 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2025-11-30 00:20:22.817 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-11-30 00:20:22.817 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-11-30 00:20:23.950 [main] INFO  com.shopease.UserApplication - Started UserApplication in 10.623 seconds (JVM running for 11.399)
+2025-11-30 00:20:24.095 [http-nio-8081-exec-2] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-30 00:20:40.205 [http-nio-8081-exec-1] INFO  com.shopease.service.impl.SysUserServiceImpl - 用户登录成功，用户名：admin
+2025-11-30 16:44:50.375 [http-nio-8081-exec-3] INFO  com.shopease.service.impl.SysUserServiceImpl - 用户登录成功，用户名：admin
+2025-11-30 16:47:04.611 [main] INFO  com.shopease.UserApplication - The following 1 profile is active: "dev"
+2025-11-30 16:47:05.209 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2025-11-30 16:47:05.210 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-30 16:47:05.210 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.79]
+2025-11-30 16:47:05.273 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-30 16:47:10.429 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2025-11-30 16:47:10.445 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-11-30 16:47:10.445 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-11-30 16:47:11.760 [main] INFO  com.shopease.UserApplication - Started UserApplication in 12.618 seconds (JVM running for 13.576)
+2025-11-30 16:48:36.010 [http-nio-8081-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-30 16:51:35.490 [http-nio-8081-exec-6] INFO  com.shopease.service.impl.SysUserServiceImpl - 用户登录成功，用户名：admin
+2025-11-30 16:53:22.316 [main] INFO  com.shopease.UserApplication - The following 1 profile is active: "dev"
+2025-11-30 16:53:22.934 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2025-11-30 16:53:22.935 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-30 16:53:22.935 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.79]
+2025-11-30 16:53:23.007 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-30 16:53:28.741 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2025-11-30 16:53:28.774 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-11-30 16:53:28.774 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-11-30 16:53:30.158 [main] INFO  com.shopease.UserApplication - Started UserApplication in 13.812 seconds (JVM running for 15.076)
+2025-11-30 16:54:43.233 [http-nio-8081-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-30 17:03:51.766 [main] INFO  com.shopease.UserApplication - The following 1 profile is active: "dev"
+2025-11-30 17:03:52.251 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2025-11-30 17:03:52.251 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-30 17:03:52.251 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.79]
+2025-11-30 17:03:52.311 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-30 17:03:56.035 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2025-11-30 17:03:56.048 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-11-30 17:03:56.048 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-11-30 17:03:57.059 [main] INFO  com.shopease.UserApplication - Started UserApplication in 9.875 seconds (JVM running for 10.737)
+2025-11-30 17:04:07.298 [http-nio-8081-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-30 21:34:15.021 [http-nio-8081-exec-5] INFO  com.shopease.service.impl.SysUserServiceImpl - 用户登录成功，用户名：admin
+2025-11-30 21:37:23.406 [http-nio-8081-exec-7] INFO  com.shopease.service.impl.SysUserServiceImpl - 用户登录成功，用户名：admin
+2025-11-30 21:40:27.837 [main] INFO  com.shopease.UserApplication - The following 1 profile is active: "dev"
+2025-11-30 21:40:28.398 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2025-11-30 21:40:28.399 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-30 21:40:28.399 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.79]
+2025-11-30 21:40:28.461 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-30 21:40:32.462 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2025-11-30 21:40:32.480 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-11-30 21:40:32.480 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-11-30 21:40:39.710 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8081"]
+2025-11-30 21:40:39.710 [main] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
+2025-11-30 21:40:39.712 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8081"]
+2025-11-30 21:40:39.714 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Destroying ProtocolHandler ["http-nio-8081"]
+2025-11-30 21:41:57.327 [main] INFO  com.shopease.UserApplication - The following 1 profile is active: "dev"
+2025-11-30 21:41:57.909 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2025-11-30 21:41:57.910 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-30 21:41:57.910 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.79]
+2025-11-30 21:41:57.978 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-30 21:42:02.254 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2025-11-30 21:42:02.269 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl success.
+2025-11-30 21:42:02.269 [main] INFO  c.a.n.p.auth.spi.client.ClientAuthPluginManager - [ClientAuthPluginManager] Load ClientAuthService com.alibaba.nacos.client.auth.ram.RamClientAuthServiceImpl success.
+2025-11-30 21:42:03.337 [main] INFO  com.shopease.UserApplication - Started UserApplication in 11.577 seconds (JVM running for 12.776)
+2025-11-30 21:42:11.285 [http-nio-8081-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'

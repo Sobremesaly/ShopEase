@@ -12,4 +12,4 @@ CREATE TABLE `sys_user` (
 
 -- 插入测试数据（密码是 123456，加密后存储）
 INSERT INTO `sys_user` (`username`, `password`, `nickname`)
-VALUES ('admin', '$2a$10$7Z4bF8y6G7H3jK2lM1nO0pQ1rS2tU3vW4xY5zZ6A7B8C9D0E1F', '管理员');
+VALUES ('admin', '$10$f4FnDGxmzayoRqBmR0CAT.rm3OsQksuVzXMhZcVRKGg7H8yZUmop6', '管理员');

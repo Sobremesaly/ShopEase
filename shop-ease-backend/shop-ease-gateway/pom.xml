@@ -15,6 +15,11 @@
 
     <!-- 网关核心依赖 -->
     <dependencies>
+        <dependency>
+            <groupId>com.shopease</groupId>
+            <artifactId>shop-ease-common</artifactId>
+            <version>1.0-SNAPSHOT</version> <!-- 版本和 common 模块一致 -->
+        </dependency>
         <!-- Spring Cloud Gateway -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -38,6 +43,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+            <version>3.1.5</version> <!-- 关键：添加版本号，和 OpenFeign 版本一致 -->
         </dependency>
     </dependencies>
 </project>
