@@ -28,21 +28,46 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
+        <!-- MyBatis-Plus 核心依赖（只保留一个！） -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.5.3.1</version>
+        </dependency>
+        <!-- MySQL 驱动（只保留一个，推荐 mysql-connector-j，8.0.33 稳定版） -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.0.33</version>
+            <scope>runtime</scope> <!--  runtime 足够，编译时不需要 -->
+        </dependency>
         <!-- OpenFeign（服务间调用） -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-security</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- 公共模块 -->
         <dependency>
             <groupId>com.shopease</groupId>
             <artifactId>shop-ease-common</artifactId>
+            <!-- 注意：多模块项目必须指定版本，或父 POM 已管理版本 -->
+            <!-- 若父 POM 没管理，添加 <version>1.0-SNAPSHOT</version>（和父模块版本一致） -->
         </dependency>
+        <!-- 校验依赖 -->
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-annotation</artifactId>
-            <version>3.5.3.1</version>
-            <scope>compile</scope>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+        <!-- Bootstrap 配置支持 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
     </dependencies>
     <dependencyManagement>

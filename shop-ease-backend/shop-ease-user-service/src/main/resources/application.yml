@@ -1,12 +1,2 @@
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/shopease?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    username: root  # 你的MySQL用户名
-    password: root  # 你的MySQL密码
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-mybatis-plus:
-  mapper-locations: classpath:mapper/*.xml  # Mapper.xml路径（如果需要）
-  type-aliases-package: com.shopease.user.entity  # 实体类包名
-  configuration:
-    map-underscore-to-camel-case: true  # 下划线转驼峰（比如数据库的 create_time 对应实体的 createTime）
+server:
+  port: 8081

@@ -8,8 +8,18 @@ spring:
       config:
         server-addr: 127.0.0.1:8848
         file-extension: yaml
+    gateway:
+      routes:
+        # 路由1：用户模块路由
+        - id: shop-ease-user-service
+          # 目标服务地址（通过服务发现找到对应服务实例）
+          uri: lb://shop-ease-user-service
+          predicates:
+            # 匹配所有 /sys/user/ 开头的请求
+            - Path=/sys/user/**
+          filters:
+            # 转发时不删除路径前缀（比如 /sys/user/login 直接转发到用户服务的 /sys/user/login）
+            - StripPrefix=0
   config:
     import:
-      - optional:nacos:${spring.application.name}.${spring.cloud.nacos.config.file-extension}
-server:
-  port: 8080
+      - optional:nacos:${spring.application.name}.yaml
