@@ -7,12 +7,78 @@
 		}
 	},
 	"pages": [
-		{ "path": "pages/login/login", "style": { "navigationBarTitleText": "登录" } },
-		{ "path": "pages/register/register", "style": { "navigationBarTitleText": "注册" } },
-		{ "path": "pages/mine/mine", "style": { "navigationBarTitleText": "个人中心" } }
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationBarBackgroundColor": "#fff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/register/register",
+			"style": {
+				"navigationBarTitleText": "注册",
+				"navigationBarBackgroundColor": "#fff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mine/mine",
+			"style": {
+				"navigationBarTitleText": "个人中心",
+				"navigationBarBackgroundColor": "#fff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mine/edit-user",
+			"style": {
+				"navigationBarTitleText": "编辑个人信息",
+				"navigationBarBackgroundColor": "#fff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/mine/change-password",
+			"style": {
+				"navigationBarTitleText": "修改密码",
+				"navigationBarBackgroundColor": "#fff",
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": false
+			}
+		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"backgroundColor": "#f5f5f5"
+		"navigationBarBackgroundColor": "#fff",
+		"backgroundColor": "#f5f7fa",
+		"windowTop": "0",
+		"enablePullDownRefresh": false
+	},
+	"tabBar": {
+		"color": "#999",
+		"selectedColor": "#42b983",
+		"backgroundColor": "#fff",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/tabbar/icons8.png",
+				"selectedIconPath": "static/tabbar/icons8.png"
+			},
+			{
+				"pagePath": "pages/mine/mine",
+				"text": "我的",
+				"iconPath": "static/tabbar/icons9.png",
+				"selectedIconPath": "static/tabbar/icons9.png"
+			}
+		]
 	}
 }

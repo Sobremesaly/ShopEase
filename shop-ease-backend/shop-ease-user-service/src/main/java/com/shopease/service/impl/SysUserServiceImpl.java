@@ -146,6 +146,18 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         sysUserMapper.updateById(user);
     }
 
+    /**
+     * 更新用户头像
+     */
+    @Override
+    public boolean updateAvatar(Long userId, String avatarUrl) {
+        SysUser user = new SysUser();
+        user.setId(userId);
+        // 存入配置化目录生成的URL
+        user.setAvatar(avatarUrl);
+        return this.updateById(user);
+    }
+
     public static void main(String[] args) {
         String encrypted = PasswordUtils.encrypt("123456");
         System.out.println(encrypted);

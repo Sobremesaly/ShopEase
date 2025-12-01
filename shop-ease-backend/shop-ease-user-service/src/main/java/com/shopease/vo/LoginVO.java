@@ -19,4 +19,7 @@ public class LoginVO {
 
     // 生成的Token（核心）
     private String token;
+
+    //头像
+    private String avatar;
 }

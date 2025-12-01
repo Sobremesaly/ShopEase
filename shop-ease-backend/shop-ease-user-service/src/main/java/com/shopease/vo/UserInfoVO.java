@@ -41,4 +41,9 @@ public class UserInfoVO {
      * 创建时间
      */
     private LocalDateTime createTime;
+
+    /**
+     * 头像URL
+     */
+    private String avatar;
 }

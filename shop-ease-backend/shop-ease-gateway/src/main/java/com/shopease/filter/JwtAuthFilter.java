@@ -55,7 +55,17 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             // 无 Token，返回 401 未登录
             return handleUnAuth(exchange, "请先登录");
         }
-
+        // 去除首尾空格（避免前端传参带空格）
+        token = token.trim();
+        // 如果以 "Bearer " 开头（忽略大小写，兼容前端传小写 bearer）
+        if (token.toLowerCase().startsWith("bearer ")) {
+            // 截取第7位之后的内容（"Bearer " 共7个字符）
+            token = token.substring(7).trim();
+        }
+        // 截取后 Token 为空（比如只传了 "Bearer" 没带具体值），直接返回401
+        if (token.isEmpty()) {
+            return handleUnAuth(exchange, "Token格式错误，请重新登录");
+        }
         // 3. 验证 Token 有效性
         boolean valid = JwtUtils.validateToken(token);
         if (!valid) {

@@ -48,6 +48,18 @@ public class Result<T> {
      *
      * @param data 业务返回的具体数据
      * @param <T> 数据泛型类型
+     * @param message 自定义成功提示信息
+     * @return 封装后的成功响应对象
+     */
+    public static <T> Result<T> success(T data, String message) {
+        return new Result<>(Constant.SUCCESS_CODE, message, data);
+    }
+
+    /**
+     * 成功响应（带数据）
+     *
+     * @param data 业务返回的具体数据
+     * @param <T> 数据泛型类型
      * @return 封装后的成功响应对象
      */
     public static <T> Result<T> success(T data) {

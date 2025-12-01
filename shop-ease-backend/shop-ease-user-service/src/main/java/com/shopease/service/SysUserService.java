@@ -52,4 +52,12 @@ public interface SysUserService extends IService<SysUser> {
      * @param changePasswordDTO 修改密码入参
      */
     void changePassword(ChangePasswordDTO changePasswordDTO);
+
+    /**
+     * 更新用户头像
+     * @param userId 用户ID
+     * @param avatarUrl 头像URL
+     * @return 是否更新成功
+     */
+    boolean updateAvatar(Long userId, String avatarUrl);
 }

@@ -8,7 +8,6 @@ import com.shopease.result.Result;
 import com.shopease.service.SysUserService;
 import com.shopease.vo.LoginVO;
 import com.shopease.vo.UserInfoVO;
-import com.shopease.validator.PasswordMatch;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
@@ -17,7 +16,7 @@ import javax.validation.Valid;
  * 负责用户登录、注册、个人信息管理等接口
  *
  * @author hspcadmin
- * @date 2025-11-30
+ * &#064;date  2025-11-30
  */
 @RestController
 @RequestMapping("/sys/user")

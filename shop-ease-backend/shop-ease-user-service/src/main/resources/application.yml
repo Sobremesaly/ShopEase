@@ -15,5 +15,11 @@ spring:
   # 激活环境（如果你的配置是按环境分的，比如application-dev.yml，这里要对应）
   profiles:
     active: dev # 保持和你报错中“currently active”的环境一致（报错显示dev已激活）
-
-    # 用户服务 application.yml
+# 本地文件存储配置（头像、图片等）
+local-storage:
+  enabled: true # 是否启用本地存储（后续迁移到OSS可设为false）
+  root-dir: D:/shop-ease/upload/ # 存储根目录（Windows示例）
+  # root-dir: /usr/shop-ease/upload/ # Linux/Mac示例（迁移时改这里就行）
+  access-prefix: /upload/ # 前端访问前缀（如：http://localhost:8080/upload/avatar/xxx.png）
+  max-file-size: 10485760 # 最大文件大小（10MB，1024*1024*10）
+  allow-types: image/jpeg,image/png,image/gif,image/webp # 允许上传的图片类型

@@ -198,7 +198,6 @@ const handleLogin = async () => {
       token: res.data.token, // 存储后端返回的token（关键！后续接口需要）
       userInfo: res.data.userInfo // 存储用户头像、昵称等（可选）
     });
-
     // 3. 提示成功并跳转页面（跳转到个人中心或首页）
     uni.$u.toast(res.msg || '登录成功');
     router.push('/pages/mine/mine'); // 替换为你的目标页面路径
@@ -227,6 +226,30 @@ const thirdLogin = (type) => {
   uni.$u.toast(`暂未开放${type === 'weixin' ? '微信' : 'QQ'}登录`);
   // 后续可接入微信开放平台/QQ互联接口
 };
+onMounted(async () => {
+  // 1. 读取记住的密码（原有逻辑保留）
+  if (userStore.rememberPwd && userStore.account) {
+    form.value.account = userStore.account;
+    form.value.password = userStore.password;
+    form.value.rememberPwd = true;
+  }
+
+  // 2. 自动登录校验：有 token 但没用户信息时，请求接口获取最新信息
+  if (userStore.token && Object.keys(userStore.userInfo).length === 0) {
+    try {
+      const res = await get('/sys/user/current'); // 后端查个人信息的接口（替换为真实路径）
+      userStore.setUserInfo({
+        ...userStore, // 保留原有账号、token 等
+        userInfo: res.data // 更新用户信息
+      });
+      // 自动跳个人中心（无需再手动登录）
+      await uni.reLaunch({url: '/pages/mine/mine'});
+    } catch (error) {
+      // token 无效，清空状态（不影响用户手动登录）
+      userStore.logout();
+    }
+  }
+});
 </script>
 
 <style scoped lang="scss">

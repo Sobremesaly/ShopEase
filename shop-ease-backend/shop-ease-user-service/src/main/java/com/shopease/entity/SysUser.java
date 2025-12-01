@@ -26,4 +26,6 @@ public class SysUser {
     private Integer status;
 
     private LocalDateTime createTime;
+
+    private String avatar;
 }

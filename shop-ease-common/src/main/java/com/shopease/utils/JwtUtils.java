@@ -89,7 +89,14 @@ public class JwtUtils {
         // 2. 获取请求头中的Token
         HttpServletRequest request = requestAttributes.getRequest();
         String token = request.getHeader("Authorization");
-        if (token == null || token.trim().isEmpty()) {
+        // 去除首尾空格（避免前端传参带空格）
+        token = token.trim();
+        // 如果以 "Bearer " 开头（忽略大小写，兼容前端传小写 bearer）
+        if (token.toLowerCase().startsWith("bearer ")) {
+            // 截取第7位之后的内容（"Bearer " 共7个字符）
+            token = token.substring(7).trim();
+        }
+        if (token.trim().isEmpty()) {
             throw new BusinessException("请先登录（未携带Authorization Token）");
         }
 

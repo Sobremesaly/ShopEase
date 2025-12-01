@@ -52,4 +52,11 @@ public class RegisterDTO {
      */
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
     private String phone;
+
+    /**
+     * 头像（可选）
+     * 校验规则：URL格式（正则）
+     */
+    @Pattern(regexp = "^(https?://).+", message = "头像URL格式不正确")
+    private String avatar;
 }
