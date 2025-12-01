@@ -1,18 +1,20 @@
 package com.shopease.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.Resource;
 import java.io.File;
 
 /**
  * Web配置（静态资源映射、跨域等）
+ * @author 17813
  */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Autowired
+    @Resource
     private LocalStorageConfig localStorageConfig;
 
     /**

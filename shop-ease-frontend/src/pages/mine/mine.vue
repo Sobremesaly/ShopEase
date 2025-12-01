@@ -9,11 +9,7 @@
     <view class="user-card">
       <!-- 头像 + 昵称 + 手机号 -->
       <view class="user-info">
-        <image
-            :src="userInfo.avatar || '/static/default-avatar.png'"
-            class="avatar"
-            mode="aspectFill"
-        />
+        <up-image :src="userInfo.avatar || '/static/avatar/icons10.png'" class="avatar" mode="aspectFill" width="100rpx" height="100rpx"/>
         <view class="info-right">
           <view class="nickname">{{ userInfo.nickname || '未设置昵称' }}</view>
           <view class="phone">

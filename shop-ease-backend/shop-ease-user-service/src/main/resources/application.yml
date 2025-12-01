@@ -17,9 +17,9 @@ spring:
     active: dev # 保持和你报错中“currently active”的环境一致（报错显示dev已激活）
 # 本地文件存储配置（头像、图片等）
 local-storage:
-  enabled: true # 是否启用本地存储（后续迁移到OSS可设为false）
-  root-dir: D:/shop-ease/upload/ # 存储根目录（Windows示例）
-  # root-dir: /usr/shop-ease/upload/ # Linux/Mac示例（迁移时改这里就行）
-  access-prefix: /upload/ # 前端访问前缀（如：http://localhost:8080/upload/avatar/xxx.png）
-  max-file-size: 10485760 # 最大文件大小（10MB，1024*1024*10）
-  allow-types: image/jpeg,image/png,image/gif,image/webp # 允许上传的图片类型
+  enabled: true # 启用本地存储
+  root-dir: D:/ShopEase/upload/ # 🌟 服务器本地存储目录（用 / 分隔，避免转义问题）
+  # 或用双反斜杠（YAML 中 \ 是转义字符，需写 2 个）：root-dir: D:\\ShopEase\\upload\\
+  access-prefix: /upload/ # 前端访问前缀（不变，比如 http://服务器IP:8080/upload/xxx.png）
+  max-file-size: 10485760 # 10MB（不变）
+  allow-types: image/jpeg,image/png,image/gif,image/webp # 不变
