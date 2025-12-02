@@ -1,144 +1,160 @@
 <template>
   <view class="register-container">
-    <!-- 顶部导航栏 -->
-    <uni-nav-bar
+    <!-- 顶部导航栏：已修正为 u-navbar -->
+    <up-navbar
         title="用户注册"
         left-text="返回"
-        @clickLeft="goBack"
-        background-color="#fff"
-        border-bottom="false"
+        @click-left="goBack"
+        :safe-area-inset-top="true"
+        placeholder
     />
 
     <!-- 主体内容（卡片式表单） -->
     <view class="register-card">
-      <uni-forms
+      <!-- 使用 uView Plus 的 Form 组件 -->
+      <up-form
           :model="form"
           :rules="formRules"
           ref="registerFormRef"
-          label-width="100rpx"
+          label-width="150"
       >
         <!-- 手机号 -->
-        <uni-forms-item label="手机号" name="phone">
-          <uni-easyinput
+        <up-form-item label="手机号" prop="phone">
+          <up-input
               v-model="form.phone"
               placeholder="请输入手机号"
-              class="input-style"
-              type="number"
+              clearable
               maxlength="11"
+              type="number"
           />
-        </uni-forms-item>
+        </up-form-item>
 
         <!-- 验证码 -->
-        <uni-forms-item label="验证码" name="code">
+        <up-form-item label="验证码" prop="code">
           <view class="code-container">
-            <uni-easyinput
+            <up-input
                 v-model="form.code"
                 placeholder="请输入验证码"
-                class="input-style code-input"
-                type="number"
+                class="code-input"
                 maxlength="6"
+                type="number"
+                clearable
             />
             <!-- 发送验证码按钮 -->
-            <button
+            <up-button
                 class="send-code-btn"
-                :disabled="isCounting"
+                :disabled="isCounting || !isPhoneValid"
                 @click="sendCode"
+                size="mini"
+                type="primary"
+                plain
             >
-              {{ isCounting ? `${countDown}s后重发` : '发送验证码' }}
-            </button>
+              {{ isCounting ? `${countDown}s后重发` : '获取验证码' }}
+            </up-button>
           </view>
-        </uni-forms-item>
+        </up-form-item>
 
         <!-- 密码 -->
-        <uni-forms-item label="设置密码" name="password">
-          <uni-easyinput
+        <up-form-item label="设置密码" prop="password">
+          <up-input
               v-model="form.password"
-              type="password"
-              :password-visibility="showPwd"
               placeholder="请设置密码（≥6位）"
-              class="input-style"
-              @click-icon="showPwd = !showPwd"
-          />
-        </uni-forms-item>
+              :password="!showPwd"
+              clearable
+          >
+            <template #suffix>
+              <u-icon
+                  :name="showPwd ? 'eye-fill' : 'eye-off'"
+                  size="20"
+                  @click="showPwd = !showPwd"
+              />
+            </template>
+          </up-input>
+        </up-form-item>
 
         <!-- 确认密码 -->
-        <uni-forms-item label="确认密码" name="confirmPwd">
-          <uni-easyinput
+        <up-form-item label="确认密码" prop="confirmPwd">
+          <up-input
               v-model="form.confirmPwd"
-              type="password"
-              :password-visibility="showConfirmPwd"
               placeholder="请再次输入密码"
-              class="input-style"
-              @click-icon="showConfirmPwd = !showConfirmPwd"
-          />
-          <!-- 密码一致性提示 -->
+              :password="!showConfirmPwd"
+              clearable
+          >
+            <template #suffix>
+              <up-icon
+                  :name="showConfirmPwd ? 'eye-fill' : 'eye-off'"
+                  size="20"
+                  @click="showConfirmPwd = !showConfirmPwd"
+              />
+            </template>
+          </up-input>
+          <!-- 密码一致性实时提示 -->
           <view class="confirm-tip" v-if="form.confirmPwd.length > 0">
             <up-icon
-                type="checkmark-circle"
-                size="24rpx"
-                color="#42b983"
-                v-if="form.password === form.confirmPwd"
+                :name="isPwdConsistent ? 'checkmark-circle-fill' : 'close-circle-fill'"
+                size="16"
+                :color="isPwdConsistent ? '#42b983' : '#fa3534'"
             />
-            <up-icon
-                type="close-circle"
-                size="24rpx"
-                color="#ff4d4f"
-                v-else
-            />
-            <text class="tip-text" :style="{ color: form.password === form.confirmPwd ? '#42b983' : '#ff4d4f' }">
-              {{ form.password === form.confirmPwd ? '密码一致' : '密码不一致' }}
+            <text class="tip-text" :style="{ color: isPwdConsistent ? '#42b983' : '#fa3534' }">
+              {{ isPwdConsistent ? '密码一致' : '密码不一致' }}
             </text>
           </view>
-        </uni-forms-item>
+        </up-form-item>
 
         <!-- 协议勾选 -->
-        <uni-forms-item name="agreement" class="agreement-item">
+        <up-form-item prop="agreement">
           <view class="agreement-container">
-            <checkbox
-                v-model="form.agreement"
-                class="agreement-checkbox"
-            />
-            <text class="agreement-text">
-              我已阅读并同意
-              <text class="protocol-text" @click="goProtocol">《用户服务协议》</text>
-              和
-              <text class="protocol-text" @click="goPrivacy">《隐私政策》</text>
-            </text>
+            <up-checkbox-group>
+              <up-checkbox
+                  v-model="form.agreement"
+                  icon-size="16"
+                  shape="circle"
+              >
+                <text class="agreement-text">
+                  我已阅读并同意
+                  <text class="protocol-text" @click.stop="goProtocol">《用户服务协议》</text>
+                  和
+                  <text class="protocol-text" @click.stop="goPrivacy">《隐私政策》</text>
+                </text>
+              </up-checkbox>
+            </up-checkbox-group>
           </view>
-        </uni-forms-item>
-      </uni-forms>
+        </up-form-item>
+      </up-form>
     </view>
 
     <!-- 注册按钮（固定底部） -->
     <view class="register-btn-container">
-      <button
+      <up-button
           class="register-btn"
           :loading="isLoading"
-          :disabled="isLoading || !form.agreement"
+          :disabled="!form.agreement"
+          type="primary"
+          shape="circle"
           @click="submitRegister"
       >
         注册并登录
-      </button>
+      </up-button>
 
       <!-- 已有账号？去登录 -->
-      <view class="login-link" @click="goLogin">
+      <view class="login-link">
         <text class="link-text">已有账号？</text>
-        <text class="login-text">立即登录</text>
+        <text class="login-text" @click="goLogin">立即登录</text>
       </view>
     </view>
   </view>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
-import { post } from '@/utils/request';
+import { ref, reactive, computed, onUnmounted } from 'vue';
+import { post } from '../../utils/request';
 
 // 状态管理
-const registerFormRef = ref(null); // 表单引用
-const isLoading = ref(false); // 加载状态
-const isCounting = ref(false); // 验证码倒计时状态
-const countDown = ref(60); // 倒计时秒数
-let countdownTimer = null; // 倒计时定时器
+const registerFormRef = ref(null);
+const isLoading = ref(false);
+const isCounting = ref(false);
+const countDown = ref(60);
+let countdownTimer = null;
 
 // 密码显示切换
 const showPwd = ref(false);
@@ -150,8 +166,12 @@ const form = reactive({
   code: '',
   password: '',
   confirmPwd: '',
-  agreement: false // 协议勾选状态
+  agreement: false
 });
+
+// 计算属性：手机号格式是否有效、密码是否一致
+const isPhoneValid = computed(() => /^1[3-9]\d{9}$/.test(form.phone.trim()));
+const isPwdConsistent = computed(() => form.password === form.confirmPwd);
 
 // 表单校验规则
 const formRules = reactive({
@@ -161,7 +181,7 @@ const formRules = reactive({
   ],
   code: [
     { required: true, message: '请输入验证码', trigger: 'blur' },
-    { min: 6, max: 6, message: '验证码长度为6位', trigger: 'blur' }
+    { len: 6, message: '验证码长度为6位', trigger: 'blur' }
   ],
   password: [
     { required: true, message: '请设置密码', trigger: 'blur' },
@@ -170,33 +190,41 @@ const formRules = reactive({
   ],
   confirmPwd: [
     { required: true, message: '请确认密码', trigger: 'blur' },
-    { validator: checkSamePwd, message: '两次输入的密码不一致', trigger: 'blur' }
+    {
+      validator: (rule, value, callback) => {
+        if (value !== form.password) {
+          callback(new Error('两次输入的密码不一致'));
+        } else {
+          callback();
+        }
+      },
+      trigger: 'blur'
+    }
   ],
   agreement: [
-    { required: true, message: '请阅读并同意用户协议和隐私政策', trigger: 'change' }
+    {
+      validator: (rule, value, callback) => {
+        if (!value) {
+          callback(new Error('请阅读并同意用户协议和隐私政策'));
+        } else {
+          callback();
+        }
+      },
+      trigger: 'change'
+    }
   ]
 });
 
-// 自定义校验：两次密码一致
-const checkSamePwd = (rule, value, callback) => {
-  if (value !== form.password) {
-    callback(new Error('两次输入的密码不一致'));
-  } else {
-    callback();
-  }
-};
-
 // 发送验证码
 const sendCode = async () => {
-  // 校验手机号
-  if (!/^1[3-9]\d{9}$/.test(form.phone.trim())) {
+  if (!isPhoneValid.value) {
     uni.$u.toast('请输入正确的手机号');
     return;
   }
 
   try {
     isCounting.value = true;
-    // 调用后端发送验证码接口（替换为你的真实接口）
+    // TODO: 替换为你的真实接口路径
     const res = await post('/sys/user/sendCode', {
       phone: form.phone.trim()
     });
@@ -222,13 +250,16 @@ const sendCode = async () => {
 
 // 提交注册
 const submitRegister = async () => {
-  // 表单校验
-  const valid = await registerFormRef.value.validate();
-  if (!valid) return;
-
   try {
+    // 进行表单校验
+    const valid = await registerFormRef.value.validate();
+    if (!valid) {
+      uni.$u.toast('请检查表单信息');
+      return;
+    }
+
     isLoading.value = true;
-    // 调用后端注册接口（替换为你的真实接口）
+    // TODO: 替换为你的真实注册接口路径和参数
     const res = await post('/sys/user/register', {
       phone: form.phone.trim(),
       code: form.code.trim(),
@@ -249,12 +280,12 @@ const submitRegister = async () => {
   }
 };
 
-// 跳转用户协议页（可选，后续可新增）
+// 跳转用户协议页
 const goProtocol = () => {
   uni.navigateTo({ url: '/pages/agreement/protocol' });
 };
 
-// 跳转隐私政策页（可选，后续可新增）
+// 跳转隐私政策页
 const goPrivacy = () => {
   uni.navigateTo({ url: '/pages/agreement/privacy' });
 };
@@ -281,9 +312,12 @@ onUnmounted(() => {
 .register-container {
   background-color: #f5f7fa;
   min-height: 100vh;
-  padding-bottom: 150rpx; // 给底部按钮留空间
+  padding-bottom: 150rpx;
 
-  // 卡片容器
+  :deep(.uni-input-placeholder) {
+    font-size: 20rpx !important;
+    color: #c0c4cc;
+  }
   .register-card {
     background-color: #fff;
     margin: 30rpx 20rpx;
@@ -291,13 +325,6 @@ onUnmounted(() => {
     padding: 30rpx;
     box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
 
-    // 输入框样式
-    .input-style {
-      font-size: 30rpx;
-      color: #333;
-    }
-
-    // 验证码容器
     .code-container {
       display: flex;
       align-items: center;
@@ -309,23 +336,10 @@ onUnmounted(() => {
 
       .send-code-btn {
         width: 200rpx;
-        height: 80rpx;
-        background-color: #f5f5f5;
-        color: #666;
-        font-size: 26rpx;
-        border-radius: 12rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        &:disabled {
-          background-color: #eee;
-          color: #999;
-        }
+        flex-shrink: 0;
       }
     }
 
-    // 确认密码提示
     .confirm-tip {
       display: flex;
       align-items: center;
@@ -337,34 +351,20 @@ onUnmounted(() => {
       }
     }
 
-    // 协议勾选项
-    .agreement-item {
-      margin-top: 10rpx;
+    .agreement-container {
+      .agreement-text {
+        font-size: 24rpx;
+        color: #666;
+        line-height: 36rpx;
+      }
 
-      .agreement-container {
-        display: flex;
-        align-items: center;
-        gap: 12rpx;
-
-        .agreement-checkbox {
-          transform: scale(0.8);
-        }
-
-        .agreement-text {
-          font-size: 24rpx;
-          color: #666;
-          line-height: 36rpx;
-        }
-
-        .protocol-text {
-          color: #42b983;
-          text-decoration: underline;
-        }
+      .protocol-text {
+        color: #42b983;
+        text-decoration: underline;
       }
     }
   }
 
-  // 注册按钮容器
   .register-btn-container {
     position: fixed;
     bottom: 0;
@@ -380,19 +380,6 @@ onUnmounted(() => {
 
     .register-btn {
       width: 100%;
-      height: 90rpx;
-      background-color: #42b983;
-      color: #fff;
-      font-size: 32rpx;
-      border-radius: 45rpx;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &:disabled {
-        background-color: #a3e6c6;
-        color: #fff;
-      }
     }
 
     .login-link {

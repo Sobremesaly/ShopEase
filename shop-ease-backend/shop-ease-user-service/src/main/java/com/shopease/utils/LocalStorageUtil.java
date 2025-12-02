@@ -2,11 +2,12 @@ package com.shopease.utils;
 
 import com.shopease.config.LocalStorageConfig;
 import com.shopease.exception.BusinessException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -15,11 +16,12 @@ import java.util.UUID;
 
 /**
  * 本地文件上传工具类（适配配置化目录）
+ * @author hspcadmin
  */
 @Component
 public class LocalStorageUtil {
 
-    @Autowired
+    @Resource
     private LocalStorageConfig localStorageConfig;
 
     /**
@@ -42,7 +44,7 @@ public class LocalStorageUtil {
         // 文件后缀（如 png）
         String suffix = StringUtils.getFilenameExtension(originalFilename);
         // 生成唯一文件名（避免覆盖）
-        String fileName = UUID.randomUUID().toString() + "." + suffix;
+        String fileName = UUID.randomUUID() + "." + suffix;
         // 按日期分目录（方便管理）
         String dateDir = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 

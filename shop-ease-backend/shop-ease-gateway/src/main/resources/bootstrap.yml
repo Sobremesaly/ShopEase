@@ -10,16 +10,21 @@ spring:
         file-extension: yaml
     gateway:
       routes:
-        # 路由1：用户模块路由
+        # 路由1：用户模块接口路由（原有，不变）
         - id: shop-ease-user-service
-          # 目标服务地址（通过服务发现找到对应服务实例）
-          uri: lb://shop-ease-user-service
+          uri: lb://shop-ease-user-service # 走 Nacos 服务发现，无需硬编码端口
           predicates:
-            # 匹配所有 /sys/user/ 开头的请求
-            - Path=/sys/user/**
+            - Path=/sys/user/** # 匹配用户模块所有业务接口（如上传头像、更新信息）
           filters:
-            # 转发时不删除路径前缀（比如 /sys/user/login 直接转发到用户服务的 /sys/user/login）
-            - StripPrefix=0
+            - StripPrefix=0 # 不删除路径前缀，完整转发
+
+        # 路由2：用户模块静态资源（图片）路由（新增，核心）
+        - id: shop-ease-user-upload
+          uri: lb://shop-ease-user-service # 同样指向 user 服务（图片存储在 user 服务）
+          predicates:
+            - Path=/upload/** # 匹配所有图片访问请求（如 /upload/avatar/xxx.png）
+          filters:
+            - StripPrefix=0 # 不删除路径前缀，确保 user 服务能正确解析静态资源路径
   config:
     import:
       - optional:nacos:${spring.application.name}.yaml

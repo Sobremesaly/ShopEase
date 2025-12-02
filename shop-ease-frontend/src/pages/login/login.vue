@@ -3,11 +3,11 @@
     <!-- 顶部 Logo + 标题 -->
     <view class="login-header">
       <!-- 可替换为自己的 Logo（放在 static 目录下） -->
-      <u-image
+      <up-image
           src="/static/images/logo.png"
           mode="widthFix"
           class="logo"
-      ></u-image>
+      ></up-image>
       <view class="login-title">欢迎登录 ShopEase</view>
       <view class="login-desc">专注便捷购物体验</view>
     </view>
@@ -15,7 +15,7 @@
     <!-- 中间表单区域 -->
     <view class="login-form">
       <!-- 手机号/用户名输入框 -->
-      <u-input
+      <up-input
           v-model="form.account"
           placeholder="请输入手机号或用户名"
           prefix-icon="account"
@@ -26,7 +26,7 @@
       />
 
       <!-- 密码输入框 -->
-      <u-input
+      <up-input
           v-model="form.password"
           type="password"
           placeholder="请输入密码"
@@ -43,17 +43,17 @@
       <!-- 记住密码 + 忘记密码 -->
 
       <view class="login-form-footer">
-        <u-checkbox-group>
-          <u-checkbox
+        <up-checkbox-group>
+          <up-checkbox
               v-model="form.rememberPwd"
               shape="circle"
               active-color="#409eff"
               class="remember-pwd"
           >
             记住密码
-          </u-checkbox>
-        </u-checkbox-group>
-        <u-link
+          </up-checkbox>
+        </up-checkbox-group>
+        <up-text
             text="忘记密码？"
             class="forgot-link"
             @click="goForgotPwd"
@@ -61,7 +61,7 @@
       </view>
 
       <!-- 登录按钮（渐变+加载状态） -->
-      <u-button
+      <up-button
           type="primary"
           class="login-btn"
           :loading="loading"
@@ -72,7 +72,7 @@
           colorEnd="#66b1ff"
       >
         登录
-      </u-button>
+      </up-button>
     </view>
 
     <!-- 底部其他登录方式 + 注册链接 -->
@@ -85,26 +85,26 @@
 
       <!-- 第三方登录图标（微信/QQ） -->
       <view class="third-login">
-        <u-icon
+        <up-icon
             name="weixin-fill"
             size="50rpx"
             color="#07C160"
             class="third-icon"
             @click="thirdLogin('weixin')"
-        ></u-icon>
-        <u-icon
+        ></up-icon>
+        <up-icon
             name="qq-fill"
             size="50rpx"
             color="#12B7F5"
             class="third-icon"
             @click="thirdLogin('qq')"
-        ></u-icon>
+        ></up-icon>
       </view>
 
       <!-- 注册链接 -->
       <view class="register-container">
         还没账号？
-        <u-link
+        <up-text
             text="立即注册"
             class="register-link"
             @click="goRegister"
@@ -323,6 +323,13 @@ onMounted(async () => {
 .forgot-link {
   font-size: 24rpx;
   color: #409eff;
+
+  :deep(.u-text__value) {
+    color: rgb(41, 121, 255) !important;
+    font-size: 15px !important;
+    line-height: 17px;
+    text-decoration: none;
+  }
 }
 
 /* 登录按钮 */
@@ -395,5 +402,12 @@ onMounted(async () => {
   color: #409eff;
   margin-left: 10rpx;
   font-weight: 500;
+
+  :deep(.u-text__value) {
+    color: rgb(41, 121, 255) !important;
+    font-size: 15px !important;
+    line-height: 17px;
+  }
+
 }
 </style>

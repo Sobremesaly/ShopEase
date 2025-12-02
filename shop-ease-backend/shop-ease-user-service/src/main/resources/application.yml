@@ -6,6 +6,12 @@ server:
   port: 8081
 # application.yml
 spring:
+  servlet:
+    multipart:
+      enabled: true # 启用文件上传
+      max-file-size: 10MB # 单个文件最大大小（根据需求调整，比如 5MB/10MB）
+      max-request-size: 10MB # 单次请求总文件大小（和单个文件大小一致即可，若多文件上传可设更大）
+      file-size-threshold: 0 # 超过该大小的文件会临时存到磁盘，0 表示所有文件都临时存储
   # 数据库连接配置（核心）
   datasource:
     url: jdbc:mysql://10.20.140.50:33061/shopease?serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf-8

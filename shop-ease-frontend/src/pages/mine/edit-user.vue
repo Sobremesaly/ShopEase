@@ -4,7 +4,8 @@
     <up-navbar
         title="编辑资料"
         left-text="返回"
-        @clickLeft="goBack"
+        @leftClick="goBack"
+        :safe-area-inset-top="true"
         background-color="#fff"
         border-bottom="false"
         title-color="#1a1a1a"
@@ -53,7 +54,7 @@
                   v-model="form.nickname"
                   placeholder="请输入昵称"
                   placeholder-style="color: #ccc;"
-                  :border="false"
+                  border="none"
                   class="nickname-input"
                   @input="handleInput('nickname')"
                   style="padding: 0"
@@ -227,10 +228,10 @@ const chooseAvatar = async () => {
 
     avatarUrl.value = uploadRes.data;
     form.avatar = uploadRes.data;
-    await uni.showToast({title: '头像上传成功', icon: 'success', duration: 1500});
+    await uni.showToast({title: uploadRes.data.msg, icon: 'success', duration: 1500});
   } catch (error) {
     console.error('头像上传失败：', error);
-    await uni.showToast({title: '上传失败，请重试', icon: 'none', duration: 1500});
+    await uni.showToast({title: uploadRes.data.msg, icon: 'none', duration: 1500});
   } finally {
     isLoading.value = false;
     uni.hideLoading();

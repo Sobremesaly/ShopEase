@@ -37,26 +37,35 @@ export function createApp() {
 	checkLoginOnLaunch();
 
 	// 2. 统一拦截所有跳转方式（核心防御）
-	const interceptAllNavigations = (options) => {
+	const interceptAllNavigations = (options, methodName) => { // 注意参数名是 methodName
 		const userStore = useUserStore();
-		// 获取目标页面路径（兼容带参数的URL，如 /pages/login/login?phone=123）
-		const targetPath = options.url.split('?')[0];
 
-		// 不在白名单 + 未登录 → 阻止跳转+跳登录页
+		// 特殊处理 navigateBack：它没有url参数，通常直接放行
+		if (methodName === 'navigateBack') {
+			return true;
+		}
+
+		// 对于其他有url的跳转，进行正常检查
+		if (!options || typeof options.url !== 'string') {
+			// 关键修复：这里原来写的是 method，但该变量未定义，应改为 methodName
+			console.warn(`[${methodName}] 跳转参数无效，已被拦截`, options);
+			return false;
+		}
+
+		const targetPath = options.url.split('?')[0];
 		if (!WHITE_LIST.includes(targetPath) && !userStore.isLogin()) {
 			uni.$u.toast('请先登录');
-			// 强制跳登录页（关闭所有页面，避免回退）
 			uni.reLaunch({ url: '/pages/login/login' });
-			return false; // 阻止原跳转
+			return false;
 		}
-		return true; // 允许跳转
+		return true;
 	};
 
-	// 给所有跳转API加拦截
+	// 修改拦截器调用，传入方法名
 	['navigateTo', 'redirectTo', 'reLaunch', 'switchTab', 'navigateBack'].forEach((method) => {
 		uni.addInterceptor(method, {
 			invoke(options) {
-				return interceptAllNavigations(options);
+				return interceptAllNavigations(options, method);
 			},
 			fail(err) {
 				console.error(`跳转拦截失败：${method}`, err);
