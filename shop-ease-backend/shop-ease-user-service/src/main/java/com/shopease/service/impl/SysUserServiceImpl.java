@@ -53,7 +53,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
 
         // 4. 生成 JWT Token
-        String token = JwtUtils.generateToken(user.getId(), user.getUsername());
+        String token = JwtUtils.generateAccessToken(user.getId(), user.getUsername());
 
         // 5. 封装响应数据
         LoginVO loginVO = new LoginVO();

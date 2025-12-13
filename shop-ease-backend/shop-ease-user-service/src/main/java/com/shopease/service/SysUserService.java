@@ -60,4 +60,8 @@ public interface SysUserService extends IService<SysUser> {
      * @return 是否更新成功
      */
     boolean updateAvatar(Long userId, String avatarUrl);
+
+    /**
+     * 清空用户token信息
+     */
 }

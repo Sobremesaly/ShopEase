@@ -9,7 +9,7 @@ import javax.validation.ConstraintValidatorContext;
  * 密码一致性校验逻辑实现
  *
  * @author hspcadmin
- * @date 2025-11-30
+ * &#064;date  2025-11-30
  */
 public class PasswordMatchValidator implements ConstraintValidator<PasswordMatch, Object> {
 

@@ -23,16 +23,17 @@
           <view class="avatar-wrapper" @click="chooseAvatar">
             <!-- 头像图片 -->
             <up-image
-                :src="userInfo.avatar == null ? '/static/avatar/icons10.png' : avatarUrl"
+                :src="avatarUrl == null ? '/static/avatar/icons10.png' : avatarUrl"
                 class="avatar-img"
                 mode="aspectFill"
                 width="180rpx"
                 height="180rpx"
+                shape="circle"
             />
 
             <!-- 半露式相机图标 -->
             <view class="camera-icon-btn" @click.stop="chooseAvatar">
-              <up-icon name="camera" size="20" color="#fff" />
+              <up-icon name="camera" size="20" color="#fff"/>
             </view>
           </view>
         </view>
@@ -157,8 +158,9 @@
 <script setup>
 import {ref, onMounted, reactive} from 'vue';
 import {useUserStore} from '../../stores/user';
-import {post, upload} from '../../utils/request';
-
+import {post, put, upload} from '../../utils/request';
+import uploadRes from "uview-ui/libs/mixin/mixin";
+const BACKEND_BASE_URL = import.meta.env.VITE_GATEWAY_BASE_URL || 'http://localhost:8080';
 // 状态管理
 const userStore = useUserStore();
 const editFormRef = ref(null);
@@ -191,7 +193,9 @@ onMounted(() => {
   form.nickname = userInfo.nickname || '';
   form.phone = userInfo.phone || '';
   form.gender = userInfo.gender || 0;
-  avatarUrl.value = userInfo.avatar || '/static/default-avatar.png';
+  avatarUrl.value = userInfo.avatar
+      ? `${BACKEND_BASE_URL}${userInfo.avatar}`
+      : '/static/default-avatar.png';
   form.avatar = userInfo.avatar || '';
 });
 
@@ -245,7 +249,7 @@ const submitForm = async () => {
 
   try {
     isLoading.value = true;
-    const res = await post('/sys/user/updateInfo', {
+    const res = await put('/sys/user/current', {
       nickname: form.nickname.trim(),
       gender: form.gender,
       avatar: form.avatar
@@ -268,9 +272,9 @@ const submitForm = async () => {
       duration: 1500
     });
 
-    setTimeout(() => {
+    /*setTimeout(() => {
       uni.navigateBack({delta: 1});
-    }, 1500);
+    }, 1500);*/
 
   } catch (error) {
     console.error('修改失败：', error);
@@ -286,7 +290,7 @@ const submitForm = async () => {
 
 // 返回上一页
 const goBack = () => {
-  uni.navigateBack({delta: 1});
+  uni.switchTab({url:'/pages/mine/mine'});
 };
 </script>
 
@@ -542,6 +546,7 @@ const goBack = () => {
       height: 180rpx;
       border-radius: 50%;
       cursor: pointer;
+      overflow: visible;
 
       .avatar-img {
         width: 100%;
@@ -554,8 +559,8 @@ const goBack = () => {
       // 方案一：半露式相机图标
       .camera-icon-btn {
         position: absolute;
-        bottom: 10rpx;    // 调整这个值控制露出多少
-        right: 10rpx;     // 调整这个值控制露出多少
+        bottom: -10rpx;    // 调整这个值控制露出多少
+        right: -10rpx;     // 调整这个值控制露出多少
         width: 52rpx;     // 缩小尺寸
         height: 52rpx;
         background: linear-gradient(135deg, #5A7DFF 0%, #33C2FF 100%);
@@ -565,7 +570,7 @@ const goBack = () => {
         justify-content: center;
         border: 3rpx solid #fff;
         box-shadow: 0 4rpx 12rpx rgba(90, 125, 255, 0.3);
-        z-index: 10;
+        z-index: 100;
         transition: all 0.2s ease;
 
         &:active {

@@ -1,4 +1,4 @@
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '../stores/user';
 
 // ===================== 全局配置 =====================
 // 正在请求的接口缓存（防止重复提交）
@@ -133,6 +133,54 @@ export const post = (url, data = {}, options = {}) => {
  */
 export const get = (url, params = {}, options = {}) => {
     return request({ url, method: 'GET', data: params, ...options });
+};
+
+/**
+ * PUT请求 - 完整更新资源
+ */
+export const put = (url, data = {}, options = {}) => {
+    return request({
+        url,
+        method: 'PUT',
+        data,
+        ...options
+    });
+};
+
+/**
+ * PATCH请求 - 部分更新资源
+ */
+export const patch = (url, data = {}, options = {}) => {
+    return request({
+        url,
+        method: 'PATCH',
+        data,
+        ...options
+    });
+};
+
+/**
+ * DELETE请求 - 删除资源
+ */
+export const del = (url, data = {}, options = {}) => {
+    return request({
+        url,
+        method: 'DELETE',
+        data,
+        ...options
+    });
+};
+
+/**
+ * OPTIONS请求 - 预检请求
+ */
+export const options = (url, data = {}, options = {}) => {
+    return request({
+        url,
+        method: 'OPTIONS',
+        data,
+        ...options
+    });
 };
 
 /**

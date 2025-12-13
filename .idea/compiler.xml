@@ -11,6 +11,7 @@
         <module name="shop-ease-gateway" />
         <module name="shop-ease-user-service" />
         <module name="shop-ease-infrastructure" />
+        <module name="shopease-redis" />
       </profile>
     </annotationProcessing>
   </component>

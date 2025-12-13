@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -12,6 +13,7 @@ import com.shopease.exception.BusinessException; // 必须导入自定义业务�
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * JWT 工具类
@@ -25,7 +27,13 @@ import java.util.Date;
 public class JwtUtils {
 
     private static String secret;
-    private static long expiration;
+
+    // Access Token过期时间（30分钟）
+    private static long accessTokenExpiration;
+
+    // Refresh Token过期时间（7天）
+    @Getter
+    private static long refreshTokenExpiration;
 
     // 通过setter注入到静态字段（无需修改，保持原有逻辑）
     @Value("${shopease.jwt.secret:shopease-secret-key-32bytes-long-12345678}")
@@ -33,18 +41,28 @@ public class JwtUtils {
         JwtUtils.secret = secret;
     }
 
-    @Value("${shopease.jwt.expiration:7200000}")
+    @Value("${shopease.jwt.access-token-expiration:7200000}")
     public void setExpiration(long expiration) {
-        JwtUtils.expiration = expiration;
+        JwtUtils.accessTokenExpiration = expiration;
+    }
+
+    @Value("${shopease.jwt.refresh-token-expiration:604800000}")
+    public void setRefreshTokenExpiration(long expiration) {
+        JwtUtils.refreshTokenExpiration = expiration;
+    }
+
+    // 生成Refresh Token（用UUID，简单安全，原有逻辑不变）
+    public static String generateRefreshToken() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
     // 生成 Token（无需修改，已正确使用 Keys.hmacShaKeyFor）
-    public static String generateToken(Long userId, String username) {
+    public static String generateAccessToken(Long userId, String username) {
         Key key = Keys.hmacShaKeyFor(secret.getBytes());
         return Jwts.builder()
                 .claim("userId", userId)
                 .claim("username", username)
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 核心补充：Maven项目基本坐标（无父工程时必须指定） -->
+    <groupId>com.shopease</groupId> <!-- 你的项目groupId，根据实际情况调整 -->
+    <artifactId>shopease-redis</artifactId>
+    <version>1.0.0</version> <!-- 版本号，自定义 -->
+
+    <name>shopease-redis</name>
+    <description>Redis common module for ShopEase project（ShopEase项目的Redis公共模块）</description>
+
+    <!-- 可选：指定项目的编码和JDK版本（推荐添加，避免编码/编译问题） -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version> <!-- 根据你的项目JDK版本调整（如11、17） -->
+        <!-- 统一管理Spring Boot版本（避免重复写版本号，便于维护） -->
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <!-- 其他依赖版本统一管理 -->
+        <commons-pool2.version>2.11.1</commons-pool2.version>
+        <jackson.version>2.13.5</jackson.version>
+    </properties>
+
+    <dependencies>
+        <!-- 1. Spring Boot自动配置核心依赖（必须） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>${spring-boot.version}</version> <!-- 引用统一的版本变量 -->
+        </dependency>
+
+        <!-- 2. Spring Boot配置处理器（可选，推荐） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <version>${spring-boot.version}</version>
+            <optional>true</optional> <!-- 不传递依赖给其他模块 -->
+        </dependency>
+
+        <!-- 3. Redis核心依赖：包含RedisTemplate/StringRedisTemplate -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
+        <!-- 4. Redis连接池（必须）：解决无连接池警告，提升性能 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>${commons-pool2.version}</version> <!-- 引用统一的版本变量 -->
+        </dependency>
+
+        <!-- 5. Jackson JSON序列化（必须）：解决Redis序列化乱码 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version> <!-- 引用统一的版本变量 -->
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- 可选：添加构建插件（如Spring Boot的maven插件，若需要打包成可执行jar） -->
+    <build>
+        <plugins>
+            <!-- 编译插件：指定JDK版本 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

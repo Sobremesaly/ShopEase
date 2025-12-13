@@ -9,7 +9,7 @@
     <view class="user-card">
       <!-- 头像 + 昵称 + 手机号 -->
       <view class="user-info">
-        <up-image :src="userInfo.avatar || '/static/avatar/icons10.png'" class="avatar" mode="aspectFill" width="100rpx" height="100rpx"/>
+        <up-image :src="avatarUrl || '/static/avatar/icons10.png'" class="avatar" mode="aspectFill" width="100rpx" height="100rpx" shape="circle"/>
         <view class="info-right">
           <view class="nickname">{{ userInfo.nickname || '未设置昵称' }}</view>
           <view class="phone">
@@ -79,12 +79,12 @@
 import { ref, onMounted } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { get } from '../../utils/request';
-
+const BACKEND_BASE_URL = import.meta.env.VITE_GATEWAY_BASE_URL || 'http://localhost:8080';
 // 状态管理
 const userStore = useUserStore();
 const userInfo = ref(userStore.userInfo);
 const isLoading = ref(false);
-
+const avatarUrl = ref('');
 // 页面挂载时获取最新用户信息（避免缓存过期）
 onMounted(async () => {
   try {
@@ -96,6 +96,9 @@ onMounted(async () => {
       ...userStore,
       userInfo: res.data
     });
+    avatarUrl.value = userStore.userInfo.avatar
+        ? `${BACKEND_BASE_URL}${userStore.userInfo.avatar}`
+        : '/static/default-avatar.png';
   } catch (error) {
     console.error('获取用户信息失败：', error);
     // 失败时仍显示缓存信息

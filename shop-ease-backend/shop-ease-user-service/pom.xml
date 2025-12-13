@@ -14,6 +14,12 @@
     <name>shop-ease-user-service</name>
 
     <dependencies>
+        <!-- 引入自定义的Redis模块 -->
+        <dependency>
+            <groupId>com.shopease</groupId> <!-- 必须和shopease-redis的pom.xml中的groupId一致 -->
+            <artifactId>shopease-redis</artifactId> <!-- 必须一致 -->
+            <version>1.0.0</version> <!-- 必须一致 -->
+        </dependency>
         <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
