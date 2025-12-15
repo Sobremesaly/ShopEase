@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.shopease</groupId>
+        <artifactId>shop-ease-backend</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>shop-ease-good-service</artifactId>
+    <name>shop-ease-good-service</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!-- 引入自定义的Redis模块 -->
+        <dependency>
+            <groupId>com.shopease</groupId> <!-- 必须和shopease-redis的pom.xml中的groupId一致 -->
+            <artifactId>shopease-redis</artifactId> <!-- 必须一致 -->
+            <version>1.0.0</version> <!-- 必须一致 -->
+        </dependency>
+        <!-- Spring Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- Nacos 注册配置 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <!-- MyBatis-Plus 核心依赖（只保留一个！） -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.5.3.1</version>
+        </dependency>
+        <!-- MySQL 驱动（只保留一个，推荐 mysql-connector-j，8.0.33 稳定版） -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.0.33</version>
+            <scope>runtime</scope> <!--  runtime 足够，编译时不需要 -->
+        </dependency>
+        <!-- OpenFeign（服务间调用） -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-security</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 公共模块 -->
+        <dependency>
+            <groupId>com.shopease</groupId>
+            <artifactId>shop-ease-common</artifactId>
+            <!-- 注意：多模块项目必须指定版本，或父 POM 已管理版本 -->
+            <!-- 若父 POM 没管理，添加 <version>1.0-SNAPSHOT</version>（和父模块版本一致） -->
+        </dependency>
+        <!-- 校验依赖 -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+        <!-- Bootstrap 配置支持 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <!-- 已有的 Spring Boot、Spring Cloud Alibaba 依赖不变 -->
+
+            <!-- 新增：管理 Spring Cloud OpenFeign 版本（与 Spring Cloud 2021.0.5 匹配） -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-openfeign</artifactId>
+                <version>3.1.5</version>
+            </dependency>
+
+            <!-- 已有的 shop-ease-common 依赖不变 -->
+        </dependencies>
+    </dependencyManagement>
+</project>

@@ -12,7 +12,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients // 开启 OpenFeign
+@EnableFeignClients
 @MapperScan("com.shopease.mapper")
 public class UserApplication {
     public static void main(String[] args) {

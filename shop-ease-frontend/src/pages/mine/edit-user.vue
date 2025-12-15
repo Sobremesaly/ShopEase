@@ -23,7 +23,7 @@
           <view class="avatar-wrapper" @click="chooseAvatar">
             <!-- 头像图片 -->
             <up-image
-                :src="avatarUrl == null ? '/static/avatar/icons10.png' : avatarUrl"
+                :src="avatarUrl || '/static/avatar/icons10.png'"
                 class="avatar-img"
                 mode="aspectFill"
                 width="180rpx"
@@ -156,141 +156,188 @@
 </template>
 
 <script setup>
-import {ref, onMounted, reactive} from 'vue';
-import {useUserStore} from '../../stores/user';
-import {post, put, upload} from '../../utils/request';
-import uploadRes from "uview-ui/libs/mixin/mixin";
+import { ref, onMounted, reactive } from 'vue';
+import { useUserStore } from '../../stores/user';
+import { put, upload } from '../../utils/request';
+
+// 环境变量：后端网关地址
 const BACKEND_BASE_URL = import.meta.env.VITE_GATEWAY_BASE_URL || 'http://localhost:8080';
-// 状态管理
+
+// 状态管理：实例化用户Store
 const userStore = useUserStore();
+
+// 表单引用
 const editFormRef = ref(null);
+
+// 状态控制
 const isLoading = ref(false);
-const avatarUrl = ref('');
+const avatarUrl = ref(''); // 头像展示URL
 
 // 表单数据
 const form = reactive({
-  nickname: '',
-  phone: '',
-  gender: 0,
-  avatar: ''
+  nickname: '', // 昵称
+  phone: '',    // 手机号（只读）
+  gender: 0,    // 性别：0-保密，1-男，2-女
+  avatar: ''    // 头像存储路径
 });
 
-// 表单校验规则
+// 表单校验规则（移除性别必填，因为默认值是0）
 const formRules = reactive({
   nickname: [
-    {required: true, message: '请输入昵称', trigger: 'blur'},
-    {min: 2, max: 10, message: '昵称长度为2-10字', trigger: 'blur'}
-  ],
-  gender: [
-    {required: true, message: '请选择性别', trigger: 'change'}
+    { required: true, message: '请输入昵称', trigger: 'blur' },
+    { min: 2, max: 10, message: '昵称长度为2-10字', trigger: 'blur' }
   ]
 });
 
 // 页面挂载时回显用户信息
-let userInfo = '';
 onMounted(() => {
-  userInfo = userStore.userInfo;
+  // 获取Pinia中的用户信息
+  const userInfo = userStore.userInfo || {};
+  // 回显表单数据
   form.nickname = userInfo.nickname || '';
   form.phone = userInfo.phone || '';
   form.gender = userInfo.gender || 0;
-  avatarUrl.value = userInfo.avatar
-      ? `${BACKEND_BASE_URL}${userInfo.avatar}`
-      : '/static/default-avatar.png';
   form.avatar = userInfo.avatar || '';
+
+  // 处理头像URL：如果是相对路径则拼接网关地址，否则直接使用
+  if (form.avatar) {
+    avatarUrl.value = form.avatar.startsWith('http')
+        ? form.avatar
+        : `${BACKEND_BASE_URL}${form.avatar}`;
+  } else {
+    avatarUrl.value = '/static/avatar/icons10.png'; // 默认头像
+  }
 });
 
-// 输入框实时处理
+// 输入框实时处理：昵称长度限制
 const handleInput = (type) => {
-  if (type === 'nickname') {
-    if (form.nickname.length > 10) {
-      form.nickname = form.nickname.slice(0, 10);
-    }
+  if (type === 'nickname' && form.nickname.length > 10) {
+    form.nickname = form.nickname.slice(0, 10);
   }
 };
 
-// 选择/更换头像
+// 头像选择与上传方法
 const chooseAvatar = async () => {
   try {
-    const {tempFilePaths} = await uni.chooseImage({
-      count: 1,
-      sizeType: ['original', 'compressed'],
-      sourceType: ['album', 'camera'],
-      crop: {width: 400, height: 400, quality: 0.9}
+    // 1. 选择图片（uniapp原生API）
+    const { tempFilePaths, errMsg } = await uni.chooseImage({
+      count: 1, // 只能选1张
+      sizeType: ['original', 'compressed'], // 原图/压缩图
+      sourceType: ['album', 'camera'], // 相册/相机
+      crop: { width: 400, height: 400, quality: 0.9 } // 裁剪为正方形
     });
 
+    // 校验是否选择了图片
     if (!tempFilePaths || tempFilePaths.length === 0) {
-      await uni.showToast({title: '未选择图片', icon: 'none', duration: 1500});
+      uni.showToast({ title: '未选择图片', icon: 'none', duration: 1500 });
       return;
     }
 
+    // 2. 显示加载状态
     isLoading.value = true;
-    await uni.showLoading({title: '上传中', mask: true});
+    uni.showLoading({ title: '上传中', mask: true });
 
-    const uploadRes = await upload('/sys/user/uploadAvatar', tempFilePaths[0], {
-      name: 'avatar'
-    });
+    // 3. 调用文件上传接口（核心：只需要这一次请求，后端已完成文件上传+头像更新）
+    // 关键：确保upload封装函数传递了Token请求头和正确的表单名
+    const uploadResult = await upload(
+        '/sys/user/uploadAvatar', // 后端接口路径
+        tempFilePaths[0], // 临时文件路径
+        {
+          name: 'avatar' // 表单字段名，与后端@RequestParam("avatar")完全匹配
+        },
+        {
+          // 传递Token请求头（后端JwtUtils需要从这里获取Token解析userId）
+          headers: {
+            'Authorization': `Bearer ${userStore.token}` // 你的Token字段
+          }
+        }
+    );
 
-    avatarUrl.value = uploadRes.data;
-    form.avatar = uploadRes.data;
-    await uni.showToast({title: uploadRes.data.msg, icon: 'success', duration: 1500});
+    // 校验上传结果
+    if (!uploadResult || !uploadResult.data) {
+      throw new Error('头像上传失败，未获取到存储路径');
+    }
+
+    // 4. 更新本地头像信息（无需再调用PUT接口）
+    form.avatar = uploadResult.data;
+    avatarUrl.value = uploadResult.data.startsWith('http')
+        ? uploadResult.data
+        : `${BACKEND_BASE_URL}${uploadResult.data}`;
+
+    // 5. 同步更新Pinia中的用户头像（可选，让个人中心等页面实时刷新）
+    userStore.userInfo.avatar = avatarUrl.value;
+
+    // 6. 提示成功
+    uni.showToast({ title: '头像上传成功', icon: 'success', duration: 1500 });
+
   } catch (error) {
+    // 错误处理：统一提示错误信息
     console.error('头像上传失败：', error);
-    await uni.showToast({title: uploadRes.data.msg, icon: 'none', duration: 1500});
+    uni.showToast({
+      title: error.message || '头像上传失败，请重试',
+      icon: 'none',
+      duration: 1500
+    });
   } finally {
+    // 关闭加载状态
     isLoading.value = false;
     uni.hideLoading();
   }
 };
 
-// 提交表单
+// 提交表单：更新用户信息
 const submitForm = async () => {
+  // 1. 表单校验
   const valid = await editFormRef.value.validate();
   if (!valid) return;
 
   try {
+    // 2. 显示加载状态
     isLoading.value = true;
-    const res = await put('/sys/user/current', {
+
+    // 3. 调用后端更新用户信息接口
+    const updateRes = await put('/sys/user/current', {
       nickname: form.nickname.trim(),
       gender: form.gender,
       avatar: form.avatar
     });
 
-    // 更新Pinia缓存
-    userStore.setUserInfo({
-      ...userStore,
-      userInfo: {
-        ...userStore.userInfo,
-        nickname: form.nickname.trim(),
-        gender: form.gender,
-        avatar: form.avatar
-      }
-    });
+    // 4. 更新Pinia中的用户信息（适配改造后的Store）
+    userStore.userInfo = {
+      ...userStore.userInfo,
+      nickname: form.nickname.trim(),
+      gender: form.gender,
+      avatar: form.avatar
+    };
+    userStore.avatar = avatarUrl.value; // 更新Store中的头像
 
-    await uni.showToast({
-      title: '修改成功',
-      icon: 'success',
-      duration: 1500
-    });
+    // 5. 提示成功，并执行重新登录逻辑（匹配页面提示）
+    uni.showToast({ title: '修改成功，请重新登录', icon: 'success', duration: 2000 });
 
-    /*setTimeout(() => {
-      uni.navigateBack({delta: 1});
-    }, 1500);*/
+    // 6. 延迟后退出登录并跳转登录页
+    setTimeout(async () => {
+      await userStore.logout(userStore.refreshToken); // 调用Store的退出登录方法
+      uni.redirectTo({ url: '/pages/login/login' }); // 跳转到登录页
+    }, 2000);
 
   } catch (error) {
-    console.error('修改失败：', error);
-    await uni.showToast({
-      title: error.msg || '修改失败，请重试',
+    // 错误处理
+    console.error('修改用户信息失败：', error);
+    uni.showToast({
+      title: error.msg || error.message || '修改失败，请重试',
       icon: 'none',
       duration: 1500
     });
   } finally {
+    // 关闭加载状态
     isLoading.value = false;
   }
 };
 
-// 返回上一页
+// 返回上一页（优先用navigateBack，兼容小程序/APP）
 const goBack = () => {
-  uni.switchTab({url:'/pages/mine/mine'});
+  uni.navigateBack({ delta: 1 });
+  // 如果是从tab页进来的，可改用：uni.switchTab({url:'/pages/mine/mine'});
 };
 </script>
 
@@ -299,7 +346,6 @@ const goBack = () => {
   background-color: #f8f9fa;
   min-height: 100vh;
   padding-bottom: 140rpx;
-  /* 【重要】 只保留此处作为顶部的内边距，并确保值正确 */
   padding-top: calc(var(--status-bar-height) + 1rpx);
   margin: 0;
   box-sizing: border-box;
@@ -337,52 +383,59 @@ const goBack = () => {
   }
 }
 
-// 头像区块
+// 头像区块 - 修复部分
 .avatar-section {
+  padding: 40rpx 32rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+
+  .section-label {
+    font-size: 32rpx;
+    color: #333;
+    font-weight: 500;
+    padding: 0 0 24rpx; /* 添加底部间距 */
+  }
+
   .avatar-content {
     display: flex;
     justify-content: center;
-    padding: 0;
+    margin-top: 20rpx; /* 添加与label的间距 */
   }
 
   .avatar-wrapper {
     position: relative;
-    width: 160rpx;
-    height: 160rpx;
+    width: 180rpx; /* 修正：从18rpx改为180rpx */
+    height: 180rpx; /* 修正：从18rpx改为180rpx */
     border-radius: 50%;
-    overflow: hidden;
     cursor: pointer;
 
+    /* 使用up-image自带的样式，去掉这里的border */
     .avatar-img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      transition: all 0.3s ease;
+      border-radius: 50%;
+      box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
     }
 
-    .avatar-overlay {
+    // 半露式相机图标
+    .camera-icon-btn {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
+      right: 0;
+      width: 52rpx;
+      height: 52rpx;
+      background: linear-gradient(135deg, #5A7DFF 0%, #33C2FF 100%);
+      border-radius: 50%;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      border: 4rpx solid #fff;
+      box-shadow: 0 4rpx 12rpx rgba(90, 125, 255, 0.3);
+      z-index: 100;
+      transition: all 0.2s ease;
 
-      .overlay-text {
-        color: #fff;
-        font-size: 24rpx;
-        margin-top: 8rpx;
+      &:active {
+        transform: scale(0.92);
       }
-    }
-
-    &:hover .avatar-overlay {
-      opacity: 1;
     }
   }
 }
@@ -520,63 +573,6 @@ const goBack = () => {
 
     &:active:not(:disabled) {
       transform: scale(0.98);
-    }
-  }
-}
-
-// 头像区域样式优化
-.avatar-section {
-  padding: 40rpx 32rpx;
-  border-bottom: 1rpx solid #f0f0f0;
-
-  .section-label {
-    font-size: 32rpx;
-    color: #333;
-    font-weight: 500;
-    padding: 0;
-  }
-
-  .avatar-content {
-    display: flex;
-    justify-content: center;
-
-    .avatar-wrapper {
-      position: relative;
-      width: 180rpx;
-      height: 180rpx;
-      border-radius: 50%;
-      cursor: pointer;
-      overflow: visible;
-
-      .avatar-img {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        border: 4rpx solid #fff;
-        box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
-      }
-
-      // 方案一：半露式相机图标
-      .camera-icon-btn {
-        position: absolute;
-        bottom: -10rpx;    // 调整这个值控制露出多少
-        right: -10rpx;     // 调整这个值控制露出多少
-        width: 52rpx;     // 缩小尺寸
-        height: 52rpx;
-        background: linear-gradient(135deg, #5A7DFF 0%, #33C2FF 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 3rpx solid #fff;
-        box-shadow: 0 4rpx 12rpx rgba(90, 125, 255, 0.3);
-        z-index: 100;
-        transition: all 0.2s ease;
-
-        &:active {
-          transform: scale(0.92);
-        }
-      }
     }
   }
 }

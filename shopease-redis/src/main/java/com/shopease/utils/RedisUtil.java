@@ -14,13 +14,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Redis工具类：封装常用的Redis操作，简化开发
+ * @author 17813
  */
-@Component // 注入到Spring容器
-@RequiredArgsConstructor // Lombok：自动生成构造器，注入依赖（避免@Autowired）
+@Component
+@RequiredArgsConstructor
 public class RedisUtil {
 
-    // 注入自定义的RedisTemplate和StringRedisTemplate
     private final RedisTemplate<String, Object> redisTemplate;
+
     private final StringRedisTemplate stringRedisTemplate;
 
     // ==================== String类型操作（最常用） ====================

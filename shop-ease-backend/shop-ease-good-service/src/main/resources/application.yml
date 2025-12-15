@@ -1,0 +1,63 @@
+logging:
+  # 强制日志路径为当前模块根目录的 logs 文件夹（与 logback 配置一致）
+  file:
+    path: ./logs/shop-ease-user-service
+server:
+  port: 8082
+# application.yml
+spring:
+  redis:
+    host: 10.20.140.36 # Redis服务器地址（生产环境改为实际地址）
+    port: 6379 # Redis端口
+    password: # Redis密码（无则留空，生产环境建议设置）
+    database: 0 # 使用的Redis数据库索引（默认0）
+    # 连接池配置（可选，提升Redis性能）
+    lettuce:
+      pool:
+        max-active: 8 # 连接池最大连接数
+        max-idle: 8 # 连接池最大空闲连接数
+        min-idle: 2 # 连接池最小空闲连接数
+        max-wait: 1000ms # 连接池最大等待时间
+  main:
+    allow-circular-references: true # 允许循环依赖
+  servlet:
+    multipart:
+      enabled: true # 启用文件上传
+      max-file-size: 10MB # 单个文件最大大小（根据需求调整，比如 5MB/10MB）
+      max-request-size: 10MB # 单次请求总文件大小（和单个文件大小一致即可，若多文件上传可设更大）
+      file-size-threshold: 0 # 超过该大小的文件会临时存到磁盘，0 表示所有文件都临时存储
+  # 数据库连接配置（核心）
+  datasource:
+    url: jdbc:mysql://10.20.140.50:33061/shopease?serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf-8
+    username: root
+    password: root123456
+    driver-class-name: com.mysql.cj.jdbc.Driver # MySQL 8.x 驱动类（必须写对）
+  # 激活环境（如果你的配置是按环境分的，比如application-dev.yml，这里要对应）
+  profiles:
+    active: dev # 保持和你报错中“currently active”的环境一致（报错显示dev已激活）
+# 本地文件存储配置（头像、图片等）
+local-storage:
+  enabled: true # 启用本地存储
+  root-dir: D:/ShopEase/upload/ # 🌟 服务器本地存储目录（用 / 分隔，避免转义问题）
+  # 或用双反斜杠（YAML 中 \ 是转义字符，需写 2 个）：root-dir: D:\\ShopEase\\upload\\
+  access-prefix: /upload/ # 前端访问前缀（不变，比如 http://服务器IP:8080/upload/xxx.png）
+  max-file-size: 10485760 # 10MB（不变）
+  allow-types: image/jpeg,image/png,image/gif,image/webp # 不变
+shopease:
+  jwt:
+    secret: shopease-secret-key-32bytes-long-12345678
+    access-token-expiration: 1800000 # 30分钟（毫秒）
+    refresh-token-expiration: 604800000 # 7天（毫秒）
+  redis:
+    host: 10.20.140.36 # Redis服务器地址（生产环境改为实际地址）
+    port: 6379 # Redis端口
+    password: redis123456 # Redis密码（无则留空，生产环境建议设置）
+    database: 0 # 使用的Redis数据库索引（默认0）
+    # 连接池配置（可选，提升Redis性能）
+    pool:
+      max-active: 16
+      max-idle: 8
+      min-idle: 4
+      max-wait: 2000
+
+

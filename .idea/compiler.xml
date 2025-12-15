@@ -8,12 +8,15 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="shop-ease-common" />
+        <module name="shop-ease-good-service" />
         <module name="shop-ease-gateway" />
         <module name="shop-ease-user-service" />
-        <module name="shop-ease-infrastructure" />
         <module name="shopease-redis" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="shop-ease-infrastructure" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

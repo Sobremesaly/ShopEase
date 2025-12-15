@@ -3,9 +3,9 @@ server:
 # 微服务的application.yml
 shopease:
   redis:
-    host: localhost
+    host: 10.20.140.36
     port: 6379
-    password:
+    password: redis123456
     database: 0
     pool:
       max-active: 16

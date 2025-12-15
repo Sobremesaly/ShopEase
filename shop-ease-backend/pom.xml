@@ -63,6 +63,7 @@
     <modules>
         <module>shop-ease-gateway</module>
         <module>shop-ease-user-service</module>
+        <module>shop-ease-good-service</module>
     </modules>
 
     <!-- 全局依赖（所有子模块共享，只放通用依赖，Gateway 不要放这里！） -->

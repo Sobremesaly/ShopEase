@@ -1,11 +1,11 @@
 import { createSSRApp } from 'vue';
 import { createPinia } from 'pinia';
 import { useUserStore } from './stores/user';
-import 'uview-plus/index.scss';
+import 'uview-plus/index.scss'; // 移除重复的导入，保留一个即可
 import './pages-json-js';
 import uView from 'uview-plus';
-import 'uview-plus/index.scss';
 import App from './App.vue';
+
 // 不需要登录的页面白名单（必须配置完整）
 const WHITE_LIST = [
 	'/pages/login/login',
@@ -19,6 +19,7 @@ export function createApp() {
 	const pinia = createPinia();
 	app.use(pinia);
 	app.use(uView);
+
 	// 1. App启动时校验登录态（关键！处理直接打开App/刷新页面）
 	const userStore = useUserStore();
 	const checkLoginOnLaunch = () => {
@@ -28,7 +29,7 @@ export function createApp() {
 		const currentPath = currentPage.route ? `/${currentPage.route}` : '';
 
 		// 不在白名单 + 未登录 → 强制跳登录页
-		if (!WHITE_LIST.includes(currentPath) && !userStore.isLogin()) {
+		if (!WHITE_LIST.includes(currentPath) && !userStore.isLogin) {
 			uni.reLaunch({ url: '/pages/login/login' });
 		}
 	};
@@ -53,7 +54,9 @@ export function createApp() {
 		}
 
 		const targetPath = options.url.split('?')[0];
-		if (!WHITE_LIST.includes(targetPath) && !userStore.isLogin()) {
+		// ========== 核心修改点 ==========
+		// 错误：userStore.isLogin() → 正确：userStore.isLogin（去掉括号）
+		if (!WHITE_LIST.includes(targetPath) && !userStore.isLogin) {
 			uni.$u.toast('请先登录');
 			uni.reLaunch({ url: '/pages/login/login' });
 			return false;

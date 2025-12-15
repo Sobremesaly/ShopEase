@@ -1,0 +1,18 @@
+# bootstrap.yml（只放启动阶段核心配置）
+spring:
+  application:
+    name: shop-ease-good-service  # 服务名
+  profiles:
+    active: dev  # 激活 dev 环境（和你之前的配置一致）
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848  # Nacos 地址
+        file-extension: yaml  # 配置格式
+        group: DEFAULT_GROUP  # 分组（默认即可）
+      discovery:
+        server-addr: 127.0.0.1:8848  # 服务发现地址
+  # 关键：import 配置必须放在 bootstrap.yml 中
+  config:
+    import: nacos:${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+    # 翻译过来就是：import nacos:shop-ease-user-service-dev.yaml

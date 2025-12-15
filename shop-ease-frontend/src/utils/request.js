@@ -13,6 +13,12 @@ const CODE_MESSAGE = {
     503: '服务暂时不可用，请稍后重试'
 };
 
+// ===================== 新增：Token刷新相关配置 =====================
+// 标记是否正在刷新token（防止多次刷新）
+let isRefreshing = false;
+// 存储等待刷新token后重试的请求队列
+let requestQueue = [];
+
 // ===================== 核心请求函数 =====================
 const request = (options) => {
     const userStore = useUserStore();
@@ -80,10 +86,15 @@ const request = (options) => {
                 const errorMsg = businessData.msg || CODE_MESSAGE[businessCode] || CODE_MESSAGE[httpCode] || '请求失败';
                 uni.$u.toast(errorMsg);
 
-                // 特殊处理：401登录过期（清空状态+强制跳登录页）
+                // ===================== 新增：处理Token过期（401） =====================
                 if (businessCode === 401 || httpCode === 401) {
-                    userStore.logout(); // 清空token和用户信息
-                    uni.reLaunch({ url: '/pages/login/login' }); // 关闭所有页面跳登录
+                    // 调用刷新Token的逻辑，刷新成功后重新发起请求
+                    handleTokenExpired({
+                        options,
+                        resolve,
+                        reject
+                    });
+                    return;
                 }
 
                 reject({ httpCode, businessCode, msg: errorMsg, data: businessData });
@@ -115,6 +126,78 @@ const request = (options) => {
         };
     });
 };
+
+// ===================== 新增：处理Token过期的核心函数 =====================
+/**
+ * 处理Token过期，刷新后重新发起请求
+ * @param {Object} params - 包含请求配置、resolve、reject
+ */
+const handleTokenExpired = async ({ options, resolve, reject }) => {
+    const userStore = useUserStore();
+    const refreshToken = userStore.refreshToken; // 假设userStore中存储了refreshToken
+
+    // 1. 无refreshToken，直接跳登录页
+    if (!refreshToken) {
+        userStore.logout(); // 清空token和用户信息
+        uni.reLaunch({ url: '/pages/login/login' });
+        reject({ msg: '登录状态失效，请重新登录' });
+        return;
+    }
+
+    // 2. 如果正在刷新token，将请求加入队列等待
+    if (isRefreshing) {
+        requestQueue.push({ options, resolve, reject });
+        return;
+    }
+
+    // 3. 开始刷新token
+    isRefreshing = true;
+    try {
+        // 调用后端的/refreshToken接口（使用基础的uni.request，避免递归拦截）
+        const refreshRes = await uni.request({
+            url: (import.meta.env.VITE_API_BASE_URL || '/api') + '/sys/user/refreshToken',
+            method: 'POST',
+            header: {
+                'Content-Type': 'application/json'
+            },
+            data: {
+                refreshToken: refreshToken // 传递refreshTokenDTO的参数
+            }
+        });
+
+        const refreshData = refreshRes.data || {};
+        // 刷新成功：获取新的accessToken
+        if (refreshRes.statusCode === 200 && refreshData.code === 200) {
+            const newAccessToken = refreshData.data;
+            // 更新userStore中的token
+            userStore.token = newAccessToken; // 假设userStore中token是accessToken
+
+            // 4. 重新发起队列中的所有请求
+            requestQueue.forEach((item) => {
+                // 重新调用request函数，传入更新后的配置
+                request(item.options)
+                    .then((res) => item.resolve(res))
+                    .catch((err) => item.reject(err));
+            });
+            requestQueue = []; // 清空队列
+
+            // 5. 重新发起当前失败的请求
+            request(options).then((res) => resolve(res)).catch((err) => reject(err));
+        } else {
+            // 刷新失败（refreshToken过期）
+            throw new Error(refreshData.msg || '刷新登录状态失败');
+        }
+    } catch (err) {
+        // 刷新token失败，跳登录页
+        uni.$u.toast(err.msg || '登录状态已过期，请重新登录');
+        userStore.logout();
+        uni.reLaunch({ url: '/pages/login/login' });
+        reject(err);
+    } finally {
+        isRefreshing = false; // 结束刷新
+    }
+};
+
 /**
  * POST请求
  * @param {string} url - 接口路径
@@ -216,6 +299,21 @@ export const upload = (url, filePath, options = {}) => {
                 if (data.code === 200) {
                     resolve(data);
                 } else {
+                    // ===================== 新增：上传文件时处理401 =====================
+                    if (data.code === 401) {
+                        // 调用token过期处理逻辑，重新上传
+                        handleTokenExpired({
+                            options: {
+                                url,
+                                method: 'UPLOAD', // 自定义标识
+                                data: { filePath, formData },
+                                ...options
+                            },
+                            resolve,
+                            reject
+                        });
+                        return;
+                    }
                     const msg = data.msg || '上传失败';
                     uni.$u.toast(msg);
                     reject(data);

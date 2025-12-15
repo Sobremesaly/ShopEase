@@ -25,12 +25,14 @@ import java.util.List;
 @Component
 public class JwtAuthFilter implements GlobalFilter, Ordered {
 
-    // 不需要拦截的接口（公开接口）
     private static final List<String> WHITE_LIST = Arrays.asList(
-            // 登录接口
+            // 登录、注册接口
             "/sys/user/login",
-            // 后续的注册接口，也放这里
-            "/sys/user/register"
+            "/sys/user/register",
+            // 刷新Token接口
+            "/sys/user/refreshToken",
+            // 退出登录接口
+            "/sys/user/logout"
     );
 
     private final ObjectMapper objectMapper;
@@ -58,7 +60,8 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         // 去除首尾空格（避免前端传参带空格）
         token = token.trim();
         // 如果以 "Bearer " 开头（忽略大小写，兼容前端传小写 bearer）
-        if (token.toLowerCase().startsWith("bearer ")) {
+        String authorizationPrefix = "bearer ";
+        if (token.toLowerCase().startsWith(authorizationPrefix)) {
             // 截取第7位之后的内容（"Bearer " 共7个字符）
             token = token.substring(7).trim();
         }
@@ -66,7 +69,8 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         if (token.isEmpty()) {
             return handleUnAuth(exchange, "Token格式错误，请重新登录");
         }
-        // 3. 验证 Token 有效性
+
+        // 3. 验证 Token 有效性（仅验证Access Token）
         boolean valid = JwtUtils.validateToken(token);
         if (!valid) {
             // Token 无效或过期，返回 401
@@ -77,7 +81,6 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         return chain.filter(exchange);
     }
 
-    // 处理未登录响应
     private Mono<Void> handleUnAuth(ServerWebExchange exchange, String msg) {
         ServerHttpResponse response = exchange.getResponse();
         // 401的状态码
@@ -95,7 +98,9 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         }
     }
 
-    // 过滤器执行顺序（数字越小，越先执行）
+    /**
+     * 过滤器执行顺序（无修改）
+     */
     @Override
     public int getOrder() {
         return -100;

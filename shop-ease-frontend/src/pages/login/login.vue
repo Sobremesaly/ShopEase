@@ -20,9 +20,9 @@
           placeholder="请输入手机号或用户名"
           prefix-icon="account"
           class="input-item"
-          :border="borderType"
+          :border="activeInput === 'account' ? 'surround' : 'bottom'"
           @focus="handleInputFocus('account')"
-          @blur="handleInputBlur('account')"
+          @blur="handleInputBlur"
       />
 
       <!-- 密码输入框 -->
@@ -32,16 +32,15 @@
           placeholder="请输入密码"
           prefix-icon="lock"
           class="input-item"
-          :border="borderType"
+          :border="activeInput === 'password' ? 'surround' : 'bottom'"
           @focus="handleInputFocus('password')"
-          @blur="handleInputBlur('password')"
+          @blur="handleInputBlur"
           :show-password="showPwd"
           suffix-icon="eye"
           @click-icon="showPwd = !showPwd"
       />
 
       <!-- 记住密码 + 忘记密码 -->
-
       <view class="login-form-footer">
         <up-checkbox-group>
           <up-checkbox
@@ -116,11 +115,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useUserStore } from '@/stores/user'; // 后续创建 Pinia 用户状态库
+import { useUserStore } from '@/stores/user'; // 改造后的Pinia Store
 import { useRouter } from 'vue-router';
-import { post } from '../../utils/request'; // 导入封装的POST请求
+// 补充导入get请求（原代码使用了但未导入）
+import { post, get } from '../../utils/request';
+
 const router = useRouter();
-const userStore = useUserStore(); // Pinia 存储用户信息
+const userStore = useUserStore(); // 实例化用户Store
 
 // 表单数据
 const form = ref({
@@ -132,26 +133,39 @@ const form = ref({
 // 状态控制
 const loading = ref(false); // 登录加载状态
 const showPwd = ref(false); // 显示密码
-const borderType = ref('bottom'); // 输入框边框样式（聚焦时变化）
-const activeInput = ref(''); // 当前聚焦的输入框
+const activeInput = ref(''); // 当前聚焦的输入框（解决边框样式错乱问题）
 
-// 输入框聚焦/失焦动画
+// 输入框聚焦/失焦逻辑优化
 const handleInputFocus = (type) => {
-  activeInput.value = type;
-  borderType.value = 'surround'; // 聚焦时显示全边框
+  activeInput.value = type; // 记录当前聚焦的输入框
 };
-const handleInputBlur = (type) => {
-  if (!form.value[type]) {
-    borderType.value = 'bottom'; // 失焦且为空时恢复下划线
-  }
+const handleInputBlur = () => {
+  // 失焦后清空聚焦状态（边框恢复下划线）
+  activeInput.value = '';
 };
 
-// 页面挂载时，读取 Pinia 中记住的密码
-onMounted(() => {
+// 页面挂载时：读取记住的密码 + 自动登录校验
+onMounted(async () => {
+  // 1. 读取Pinia中记住的密码（处理加密解密）
   if (userStore.rememberPwd && userStore.account) {
     form.value.account = userStore.account;
-    form.value.password = userStore.password;
+    // 解密密码后赋值到表单（适配Store中的加密存储）
+    form.value.password = userStore.decryptPwd(userStore.password);
     form.value.rememberPwd = true;
+  }
+
+  // 2. 自动登录校验：有token但无用户信息时，请求接口获取最新信息
+  if (userStore.isLogin && Object.keys(userStore.userInfo).length === 0) {
+    try {
+      const res = await get('/sys/user/current'); // 后端查询当前用户信息的接口
+      // 更新用户信息到Store（保留原有token和refreshToken）
+      userStore.userInfo = res.data;
+      // 自动跳转到个人中心
+      await uni.reLaunch({ url: '/pages/mine/mine' });
+    } catch (error) {
+      // token无效，清空状态（不影响用户手动登录）
+      userStore.logout();
+    }
   }
 });
 
@@ -178,47 +192,47 @@ const validateForm = () => {
   return true;
 };
 
-// 登录逻辑（后续替换为真实接口）
+// 登录逻辑（适配双Token机制）
 const handleLogin = async () => {
   if (!validateForm()) return;
 
   loading.value = true;
   try {
-    // 1. 调用后端登录接口（替换为你的真实接口路径，参数和后端一致）
+    // 1. 调用后端登录接口（参数和后端一致：username + password）
     const res = await post('/sys/user/login', {
       username: form.value.account.trim(),
       password: form.value.password.trim()
     });
 
-    // 2. 登录成功：存储用户信息到Pinia（token+账号+用户信息）
+    // 2. 登录成功：将后端返回的完整LoginVO传入Store（包含双Token）
     userStore.setUserInfo({
+      loginVO: res.data, // 后端返回的完整数据：userId、username、nickname、token、refreshToken
       account: form.value.account.trim(),
-      password: form.value.rememberPwd ? form.value.password.trim() : '',
-      rememberPwd: form.value.rememberPwd,
-      token: res.data.token, // 存储后端返回的token（关键！后续接口需要）
-      userInfo: res.data.userInfo // 存储用户头像、昵称等（可选）
+      password: form.value.password.trim(),
+      rememberPwd: form.value.rememberPwd
     });
-    // 3. 提示成功并跳转页面（跳转到个人中心或首页）
+
+    // 3. 提示成功并跳转页面
     uni.$u.toast(res.msg || '登录成功');
-    router.push('/pages/mine/mine'); // 替换为你的目标页面路径
+    router.push('/pages/mine/mine'); // 替换为你的目标页面
 
   } catch (error) {
-    // 4. 登录失败：不跳转，提示错误（比如账号密码错误）
+    // 4. 登录失败：提示错误信息
+    uni.$u.toast(error.msg || '登录失败，请重试');
     console.error('登录失败：', error);
   } finally {
     loading.value = false; // 关闭加载状态
   }
 };
 
-
 // 跳转忘记密码页
 const goForgotPwd = () => {
-  uni.navigateTo({ url: '/pages/forgot-pwd/forgot-pwd' });
+  uni.navigateTo({url: '/pages/forgot-pwd/forgot-pwd'});
 };
 
 // 跳转注册页
 const goRegister = () => {
-  uni.navigateTo({ url: '/pages/register/register' });
+  uni.navigateTo({url: '/pages/register/register'});
 };
 
 // 第三方登录（微信/QQ）
@@ -226,30 +240,6 @@ const thirdLogin = (type) => {
   uni.$u.toast(`暂未开放${type === 'weixin' ? '微信' : 'QQ'}登录`);
   // 后续可接入微信开放平台/QQ互联接口
 };
-onMounted(async () => {
-  // 1. 读取记住的密码（原有逻辑保留）
-  if (userStore.rememberPwd && userStore.account) {
-    form.value.account = userStore.account;
-    form.value.password = userStore.password;
-    form.value.rememberPwd = true;
-  }
-
-  // 2. 自动登录校验：有 token 但没用户信息时，请求接口获取最新信息
-  if (userStore.token && Object.keys(userStore.userInfo).length === 0) {
-    try {
-      const res = await get('/sys/user/current'); // 后端查个人信息的接口（替换为真实路径）
-      userStore.setUserInfo({
-        ...userStore, // 保留原有账号、token 等
-        userInfo: res.data // 更新用户信息
-      });
-      // 自动跳个人中心（无需再手动登录）
-      await uni.reLaunch({url: '/pages/mine/mine'});
-    } catch (error) {
-      // token 无效，清空状态（不影响用户手动登录）
-      userStore.logout();
-    }
-  }
-});
 </script>
 
 <style scoped lang="scss">
@@ -408,6 +398,5 @@ onMounted(async () => {
     font-size: 15px !important;
     line-height: 17px;
   }
-
 }
 </style>

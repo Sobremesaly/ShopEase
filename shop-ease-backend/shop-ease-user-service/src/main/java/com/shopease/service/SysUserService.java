@@ -13,7 +13,7 @@ import com.shopease.vo.UserInfoVO;
  * 系统用户服务接口
  *
  * @author hspcadmin
- * @date 2025-11-30
+ * &#064;date  2025-11-30
  */
 public interface SysUserService extends IService<SysUser> {
 
@@ -63,5 +63,14 @@ public interface SysUserService extends IService<SysUser> {
 
     /**
      * 清空用户token信息
+     * @param refreshToken 刷新token
      */
+    void logout(String refreshToken);
+
+    /**
+     * 刷新Access Token接口
+     * @param refreshToken 刷新token
+     * @return token结果
+     */
+    String refreshAccessToken(String refreshToken);
 }
