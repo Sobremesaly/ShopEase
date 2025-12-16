@@ -47,7 +47,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-            <version>3.1.5</version> <!-- 关键：添加版本号，和 OpenFeign 版本一致 -->
         </dependency>
     </dependencies>
 </project>

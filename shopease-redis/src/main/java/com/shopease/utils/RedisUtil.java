@@ -1,11 +1,11 @@
 package com.shopease.utils;
 
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +20,10 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RedisUtil {
 
+    @Resource
     private final RedisTemplate<String, Object> redisTemplate;
 
+    @Resource
     private final StringRedisTemplate stringRedisTemplate;
 
     // ==================== String类型操作（最常用） ====================

@@ -15,11 +15,11 @@ import com.shopease.utils.PasswordUtils;
 import com.shopease.utils.RedisUtil;
 import com.shopease.vo.LoginVO;
 import com.shopease.vo.UserInfoVO;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;

@@ -3,11 +3,11 @@ package com.shopease.controller;
 import com.shopease.result.Result;
 import com.shopease.service.GoodsCategoryService;
 import com.shopease.vo.GoodsCategoryVO;
+import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**

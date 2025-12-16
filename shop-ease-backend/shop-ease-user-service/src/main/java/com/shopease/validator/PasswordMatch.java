@@ -1,14 +1,16 @@
 package com.shopease.validator;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
+
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+
 import java.lang.annotation.*;
 
 /**
  * 自定义校验注解：校验两次密码一致
  *
  * @author hspcadmin
- * @date 2025-11-30
+ * &#064;date  2025-11-30
  */
 @Target({ElementType.TYPE}) // 作用于类（因为要对比两个字段）
 @Retention(RetentionPolicy.RUNTIME)

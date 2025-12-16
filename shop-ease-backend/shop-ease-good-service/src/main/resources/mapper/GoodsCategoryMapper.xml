@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shopease.mapper.GoodsCategoryMapper">
+    <select id="selectCategoryWithChildren" resultType="com.shopease.entity.GoodsCategory">
+        SELECT * FROM sys_goods_category WHERE parent_id = #{parentId}
+    </select>
+</mapper>

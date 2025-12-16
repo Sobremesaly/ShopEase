@@ -2,12 +2,12 @@ package com.shopease.utils;
 
 import com.shopease.config.LocalStorageConfig;
 import com.shopease.exception.BusinessException;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;

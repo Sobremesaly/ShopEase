@@ -1,6 +1,5 @@
-package com.shopease.service;
+package com.shopease.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shopease.entity.GoodsCategory;
 import com.shopease.mapper.GoodsCategoryMapper;
@@ -9,56 +8,44 @@ import com.shopease.vo.GoodsCategoryVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 商品分类服务实现
+ * 商品分类Service实现类
  */
 @Service
 public class GoodsCategoryServiceImpl extends ServiceImpl<GoodsCategoryMapper, GoodsCategory> implements GoodsCategoryService {
 
     /**
-     * 查询分类树形结构（一级分类+二级分类）
+     * 构建分类树形结构
      */
     @Override
     public List<GoodsCategoryVO> getCategoryTree() {
-        // 1. 查询所有分类（按parentId和sort排序）
-        List<GoodsCategory> categoryList = this.list(
-                new LambdaQueryWrapper<GoodsCategory>()
-                        .orderByAsc(GoodsCategory::getParentId)
-                        .orderByAsc(GoodsCategory::getSort)
-        );
+        // 1. 查询所有分类
+        List<GoodsCategory> categoryList = this.list();
 
-        // 2. 筛选一级分类（parentId=0）
-        List<GoodsCategoryVO> parentVOList = categoryList.stream()
-                .filter(category -> category.getParentId() == 0)
-                .map(category -> {
-                    GoodsCategoryVO vo = new GoodsCategoryVO();
-                    BeanUtils.copyProperties(category, vo);
-                    // 3. 为每个一级分类添加子分类（二级分类）
-                    List<GoodsCategoryVO> childrenVOList = categoryList.stream()
-                            .filter(child -> child.getParentId().equals(category.getId()))
-                            .map(child -> {
-                                GoodsCategoryVO childVO = new GoodsCategoryVO();
-                                BeanUtils.copyProperties(child, childVO);
-                                return childVO;
-                            })
-                            .collect(Collectors.toList());
-                    vo.setChildren(childrenVOList);
-                    return vo;
-                })
+        // 2. 转换为VO对象
+        List<GoodsCategoryVO> categoryVOList = categoryList.stream().map(category -> {
+            GoodsCategoryVO vo = new GoodsCategoryVO();
+            BeanUtils.copyProperties(category, vo);
+            return vo;
+        }).collect(Collectors.toList());
+
+        // 3. 构建树形结构：先筛选一级分类（parentId=0），再为每个一级分类添加子分类
+        List<GoodsCategoryVO> rootVOList = categoryVOList.stream()
+                .filter(vo -> vo.getParentId() == 0) // 一级分类
                 .collect(Collectors.toList());
 
-        return parentVOList;
-    }
+        for (GoodsCategoryVO rootVO : rootVOList) {
+            // 筛选当前一级分类的子分类（parentId=rootVO.getId()）
+            List<GoodsCategoryVO> childrenVO = categoryVOList.stream()
+                    .filter(vo -> vo.getParentId().equals(rootVO.getId()))
+                    .collect(Collectors.toList());
+            rootVO.setChildren(childrenVO);
+        }
 
-    /**
-     * 根据分类ID查询分类名称
-     */
-    @Override
-    public String getCategoryNameById(Long categoryId) {
-        GoodsCategory category = this.getById(categoryId);
-        return category == null ? "" : category.getName();
+        return rootVOList;
     }
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shopease.mapper.GoodsMapper">
+
+    <!-- 商品列表VO的结果映射 -->
+    <resultMap id="GoodsListVOMap" type="com.shopease.vo.GoodsListVO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="sub_title" property="subTitle"/>
+        <result column="price" property="price"/>
+        <result column="stock" property="stock"/>
+        <result column="image" property="image"/>
+        <result column="status" property="status"/>
+        <result column="sort" property="sort"/>
+        <result column="category_name" property="categoryName"/>
+    </resultMap>
+
+    <!-- 商品详情VO的结果映射 -->
+    <resultMap id="GoodsDetailVOMap" type="com.shopease.vo.GoodsDetailVO">
+        <id column="id" property="id"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="name" property="name"/>
+        <result column="sub_title" property="subTitle"/>
+        <result column="price" property="price"/>
+        <result column="stock" property="stock"/>
+        <result column="image" property="image"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="sort" property="sort"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 分页查询商品列表（关联分类名称） -->
+    <select id="selectGoodsListPage" resultMap="GoodsListVOMap">
+        SELECT g.*, c.name AS category_name
+        FROM sys_goods g
+        LEFT JOIN sys_goods_category c ON g.category_id = c.id
+        <where>
+            <if test="categoryId != null and categoryId > 0">
+                g.category_id = #{categoryId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (g.name LIKE CONCAT('%', #{keyword}, '%') OR g.sub_title LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null">
+                AND g.status = #{status}
+            </if>
+        </where>
+        ORDER BY g.sort ASC, g.update_time DESC
+    </select>
+
+    <!-- 查询商品详情（关联分类名称） -->
+    <select id="selectGoodsDetailById" resultMap="GoodsDetailVOMap">
+        SELECT g.*, c.name AS category_name
+        FROM sys_goods g
+                 LEFT JOIN sys_goods_category c ON g.category_id = c.id
+        WHERE g.id = #{id}
+    </select>
+
+</mapper>

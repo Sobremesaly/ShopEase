@@ -8,9 +8,9 @@ import com.shopease.result.Result;
 import com.shopease.service.SysUserService;
 import com.shopease.vo.LoginVO;
 import com.shopease.vo.UserInfoVO;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * 系统用户控制器

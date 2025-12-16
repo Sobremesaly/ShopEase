@@ -1,15 +1,15 @@
 package com.shopease.dto;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
  * 用户注册入参DTO
  *
  * @author hspcadmin
- * @date 2025-11-30
+ * &#064;date  2025-11-30
  */
 @Data
 public class RegisterDTO {

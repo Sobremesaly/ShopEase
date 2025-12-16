@@ -4,13 +4,13 @@ import com.shopease.result.Result;
 import com.shopease.service.SysUserService;
 import com.shopease.utils.JwtUtils;
 import com.shopease.utils.LocalStorageUtil;
+import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 
 /**
  * 用户头像上传接口

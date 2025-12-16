@@ -6,9 +6,8 @@ import com.shopease.result.Result;
 import com.shopease.service.GoodsService;
 import com.shopease.vo.GoodsDetailVO;
 import com.shopease.vo.GoodsListVO;
+import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
 
 /**
  * 商品控制器

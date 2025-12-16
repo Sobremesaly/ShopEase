@@ -16,18 +16,20 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import javax.annotation.Resource;
 import java.time.Duration;
 
 /**
  * 自定义Redis自动配置类（包含连接配置+序列化配置）
- * @author hspcadmin
  */
 @Configuration
 public class RedisAutoConfiguration {
 
-    @Resource
-    private RedisProperties redisProperties;
+    private final RedisProperties redisProperties;
+
+    // 推荐：使用构造方法注入（Spring Boot推荐的方式，无需@Resource）
+    public RedisAutoConfiguration(RedisProperties redisProperties) {
+        this.redisProperties = redisProperties;
+    }
 
     /**
      * 手动创建LettuceConnectionFactory（自定义连接配置）
@@ -55,7 +57,10 @@ public class RedisAutoConfiguration {
                 new org.springframework.data.redis.connection.RedisStandaloneConfiguration();
         redisConfig.setHostName(redisProperties.getHost());
         redisConfig.setPort(redisProperties.getPort());
-        redisConfig.setPassword(redisProperties.getPassword());
+        // 处理密码：如果密码为空，不需要设置（避免Redis没有密码时报错）
+        if (!redisProperties.getPassword().isEmpty()) {
+            redisConfig.setPassword(redisProperties.getPassword());
+        }
         redisConfig.setDatabase(redisProperties.getDatabase());
 
         return new LettuceConnectionFactory(redisConfig, clientConfig);

@@ -4,22 +4,23 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 商品分类VO（支持树形结构，比如一级分类下的二级分类）
+ * 商品分类VO（树形结构）
+ * @author 17813
  */
 @Data
 public class GoodsCategoryVO {
-    /**
-     * 分类ID
-     */
+    /** 分类ID */
     private Long id;
 
-    /**
-     * 分类名称
-     */
+    /** 分类名称 */
     private String name;
 
-    /**
-     * 子分类列表（二级分类）
-     */
+    /** 父分类ID（0表示一级分类） */
+    private Long parentId;
+
+    /** 排序 */
+    private Integer sort;
+
+    /** 子分类列表 */
     private List<GoodsCategoryVO> children;
 }

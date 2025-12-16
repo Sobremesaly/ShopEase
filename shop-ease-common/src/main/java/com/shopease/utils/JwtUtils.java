@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import com.shopease.exception.BusinessException; // 必须导入自定义业务异常
-import javax.servlet.http.HttpServletRequest;
+import com.shopease.exception.BusinessException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
 import java.util.UUID;

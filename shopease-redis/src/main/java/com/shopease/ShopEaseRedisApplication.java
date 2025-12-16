@@ -1,12 +1,11 @@
 package com.shopease;
 
 import com.shopease.utils.RedisUtil;
+import jakarta.annotation.Resource;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
